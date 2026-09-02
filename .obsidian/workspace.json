@@ -11,12 +11,14 @@
             "id": "60222fd39570ecfa",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "figs/slab_geometry.png"
+                "file": "docs/Notes on the Maximum Clique paper.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "slab_geometry"
+              "icon": "lucide-file",
+              "title": "Notes on the Maximum Clique paper"
             }
           }
         ]
@@ -97,7 +99,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "figs/slab_geometry.png",
+                "file": "docs/Notes on the Maximum Clique paper.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -116,7 +118,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "figs/slab_geometry.png",
+                "file": "docs/Notes on the Maximum Clique paper.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -159,7 +161,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "figs/slab_geometry.png",
+                "file": "docs/Notes on the Maximum Clique paper.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -186,31 +188,32 @@
       "bases:Create new base": false
     }
   },
-  "active": "9965c20fb1103dce",
+  "active": "60222fd39570ecfa",
   "lastOpenFiles": [
-    "figs/lens_geometry.png",
     "figs/lemma21_case_vertical.gif",
-    "figs/lemma21_case_b.gif",
-    "figs/lemma21_case_c.gif",
-    "figs/chapter3/notation/single_type_clique_fig.png",
-    "figs/chapter3/notation/disk_graph_fig.png",
+    "lemma21_case_b.gif",
+    "lemma21_case_c.gif",
+    "lemma21_case_vertical.gif",
     "docs/Notes on the Maximum Clique paper.md",
+    "figs/chapter2/lemma21/lemma21_case_vertical.gif",
+    "lemma21_sliding_animation.py~",
+    "figs/chapter2/lemma21/lemma21_case_c.gif",
+    "figs/chapter2/lemma21/lemma21_case_b.gif",
+    "__pycache__/lemma21_sliding_animation.cpython-311.pyc",
+    "__pycache__",
+    "figs/chapter2/lemma21",
+    "figs/chapter2/perliminaries/slab_geometry.png",
+    "figs/chapter2/perliminaries/lens_geometry.png",
+    "figs/slab_geometry.png",
+    "figs/lens_geometry.png",
+    "figs/chapter2/perliminaries",
+    "figs/chapter2",
     "docs/Clique paper study checklist.md",
-    "docs/Pasted image 20260902104618.png",
-    "docs/Pasted image 20260902104610.png",
-    "docs/Pasted image 20260902104554.png",
-    "docs/Pasted image 20260902104543.png",
-    "docs/Pasted image 20260829211312.png",
+    "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
     "figs/chapter3/notation",
     "figs/chapter3",
     "README.md",
-    "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
     "figs",
-    "Unconfirmed 585098.crdownload",
-    "Unconfirmed 322950.crdownload",
-    "Unconfirmed 376747.crdownload",
-    "Unconfirmed 661858.crdownload",
-    "Untitled.md",
-    "docs"
+    "Untitled.md"
   ]
 }

@@ -128,23 +128,3 @@ def animate_case(p, q, a, b, case, fname, frames=70, hold=18):
     anim.save(fname, writer=PillowWriter(fps=22))
     plt.close(fig)
     return fname
-
-# ---------- the two scenarios of Figure 1(b)-(c) ----------
-
-a, b = np.array([0.0, 0.0]), np.array([4.0, 0.8])
-
-# Case (b): p high above the slab; the ray p->q exits through segment ab itself
-animate_case(p=np.array([1.1, 3.4]), q=np.array([2.1, 1.2]),
-             a=a, b=b, case="b", fname="lemma21_case_b.gif")
-
-# Case (c): p outside the slab to the right; the ray exits through the LEFT wall
-animate_case(p=np.array([5.3, 2.4]), q=np.array([3.2, 2.0]),
-             a=a, b=b, case="c", fname="lemma21_case_c.gif")
-
-# Scenario 2 (degenerate): a and b share the same x-coordinate; the slab
-# collapses to the vertical line through them, and q sits on that line.
-av, bv = np.array([2.0, 0.0]), np.array([2.0, 1.6])
-animate_case(p=np.array([3.7, 3.0]), q=np.array([2.0, 2.35]),
-             a=av, b=bv, case="v", fname="lemma21_case_vertical.gif")
-
-print("wrote lemma21_case_b.gif, lemma21_case_c.gif and lemma21_case_vertical.gif")

@@ -13,6 +13,7 @@ def _():
     import numpy as np
     from matplotlib.patches import Polygon, Circle
     import math
+    import marimo as mo
 
     TYPE_FACE = {1: "#a5d8ff", 2: "#ffd8a8"}      # fill by radius type
     TYPE_EDGE = {1: "#1971c2", 2: "#e8590c"}
@@ -24,9 +25,26 @@ def _():
         TYPE_FACE,
         itertools,
         math,
+        mo,
         np,
         plt,
     )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    # Chapter 2 Figures
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Lens Geometry
+    """)
+    return
 
 
 @app.cell
@@ -104,7 +122,6 @@ def _(Circle, Polygon, math, np, plt):
         plt.title('The Co-Bipartite Lens Region', fontsize=16, fontweight='bold')
 
         plt.tight_layout()
-        plt.savefig('lens_geometry.png', dpi=300)
         return fig
 
     return (lens_geometry,)
@@ -112,7 +129,17 @@ def _(Circle, Polygon, math, np, plt):
 
 @app.cell
 def _(lens_geometry):
-    lens_geometry()
+    lens_geometry_fig = lens_geometry()
+    lens_geometry_fig.savefig('figs/chapter2/perliminaries/lens_geometry.png', dpi=300)
+    lens_geometry_fig
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Slab Geometry
+    """)
     return
 
 
@@ -158,7 +185,6 @@ def _(plt):
         plt.title('The Slab-Based Regions', fontsize=16, fontweight='bold')
 
         plt.tight_layout()
-        plt.savefig('slab_geometry.png', dpi=300)
         return fig
 
 
@@ -167,118 +193,65 @@ def _(plt):
 
 @app.cell
 def _(slab_geom):
-    slab_geom()
+    slab_geom_fig = slab_geom()
+    slab_geom_fig.savefig('figs/chapter2//perliminaries/slab_geometry.png', dpi=300)
+    slab_geom_fig
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Lemma 2.1
+    """)
     return
 
 
 @app.cell
-def _():
-    # def notation_drawings():
-    #     # Section 3 notation, visualized — paste this whole block into one marimo cell.
-    #     # Writes section3_notation.png (for your slides) and shows the figure inline.
-    #     # The maximum clique is computed by brute force from the actual geometry,
-    #     # so every highlighted set is provably correct for this arrangement.
+def _(np):
+    import lemma21_sliding_animation as l2anim
 
-    #     import itertools
-    #     import numpy as np
-    #     import matplotlib.pyplot as plt
-    #     from matplotlib.patches import Circle
+    def figs_lemma21():
+        """---------- the two scenarios of Figure 1(b)-(c) ----------"""
+        a, b = np.array([0.0, 0.0]), np.array([4.0, 0.8])
 
-    #     # ---------- a concrete D_2 : two radius types (k = 2) ----------
-    #     R1, R2 = 0.8, 1.4                       # r_1 < r_2
-    #     disks = [  # (x,     y,    radius, name)
-    #         ( 0.0,  0.0, R1, "s1"),
-    #         ( 1.1,  0.2, R1, "s2"),
-    #         ( 0.5,  0.9, R1, "s3"),
-    #         ( 2.6, -0.5, R1, "s4"),
-    #         (-1.6, -1.4, R1, "s5"),
-    #         ( 1.8,  1.2, R2, "b1"),
-    #         ( 0.9, -1.0, R2, "b2"),
-    #         (-2.4,  0.6, R2, "b3"),
-    #     ]
-    #     pos  = np.array([[d[0], d[1]] for d in disks])
-    #     rad  = np.array([d[2] for d in disks])
-    #     name = [d[3] for d in disks]
-    #     n    = len(disks)
-    #     typ  = [1 if r == R1 else 2 for r in rad]
+        # Case (b): p high above the slab; the ray p->q exits through segment ab itself
+        s1_b = l2anim.animate_case(p=np.array([1.1, 3.4]), q=np.array([2.1, 1.2]),
+                     a=a, b=b, case="b", fname="figs/chapter2/lemma21/lemma21_case_b.gif")
 
-    #     # adjacency: disks intersect  <=>  |ab| <= r_a + r_b
-    #     A = [[i != j and np.linalg.norm(pos[i] - pos[j]) <= rad[i] + rad[j] + 1e-12
-    #           for j in range(n)] for i in range(n)]
+        # Case (c): p outside the slab to the right; the ray exits through the LEFT wall
+        s1_c = l2anim.animate_case(p=np.array([5.3, 2.4]), q=np.array([3.2, 2.0]),
+                     a=a, b=b, case="c", fname="figs/chapter2/lemma21/lemma21_case_c.gif")
 
-    #     def is_clique(S):
-    #         return all(A[i][j] for i, j in itertools.combinations(S, 2))
+        # Scenario 2 (degenerate): a and b share the same x-coordinate; the slab
+        # collapses to the vertical line through them, and q sits on that line.
+        av, bv = np.array([2.0, 0.0]), np.array([2.0, 1.6])
+        s2 = l2anim.animate_case(p=np.array([3.7, 3.0]), q=np.array([2.0, 2.35]),
+                     a=av, b=bv, case="v", fname="figs/chapter2/lemma21/lemma21_case_vertical.gif")
+        return s1_b, s1_b, s2
 
-    #     # brute-force maximum clique (n is tiny, so this is instant and exact)
-    #     Cmax = max((S for m in range(n, 0, -1)
-    #                 for S in itertools.combinations(range(n), m) if is_clique(S)),
-    #                key=len)
-    #     C1 = [i for i in Cmax if typ[i] == 1]    # calligraphic C_1: type-1 disks of C
-    #     C2 = [i for i in Cmax if typ[i] == 2]    # calligraphic C_2: type-2 disks of C
-    #     print("maximum clique C =", [name[i] for i in Cmax],
-    #           "| C_1 =", [name[i] for i in C1], "| C_2 =", [name[i] for i in C2])
+    return (figs_lemma21,)
 
-    #     TYPE_FACE = {1: "#a5d8ff", 2: "#ffd8a8"}          # fill by radius type
-    #     TYPE_EDGE = {1: "#1971c2", 2: "#e8590c"}
 
-    #     def draw(ax, title, emph=None, dim_others=False, edge_colors=None):
-    #         """Draw the arrangement; emph = set of indices to bold, others optionally faded."""
-    #         emph = set(emph or [])
-    #         for i in range(n):
-    #             strong = (not dim_others) or (i in emph)
-    #             ec = (edge_colors or {}).get(i, "#333" if i in emph else TYPE_EDGE[typ[i]])
-    #             ax.add_patch(Circle(pos[i], rad[i],
-    #                                 facecolor=TYPE_FACE[typ[i]],
-    #                                 edgecolor=ec,
-    #                                 alpha=.85 if strong else .18,
-    #                                 lw=2.6 if i in emph else 1.2, zorder=2))
-    #             ax.plot(*pos[i], "o", color="k", ms=3,
-    #                     alpha=1 if strong else .25, zorder=4)
-    #             ax.annotate(name[i], pos[i], textcoords="offset points", xytext=(5, 5),
-    #                         fontsize=9, alpha=1 if strong else .3, zorder=5)
-    #         # intersection-graph edges between centers
-    #         for i, j in itertools.combinations(range(n), 2):
-    #             if A[i][j]:
-    #                 both = i in emph and j in emph
-    #                 ax.plot(*np.c_[pos[i], pos[j]],
-    #                         color="#444" if both and emph else "#999",
-    #                         lw=2.2 if both and emph else 0.9,
-    #                         alpha=.9 if (both or not dim_others) else .15, zorder=3)
-    #         ax.set_title(title, fontsize=11)
-    #         ax.set_aspect("equal"); ax.set_xlim(-4.1, 4.3); ax.set_ylim(-3.1, 3.1)
-    #         ax.axis("off")
+@app.cell
+def _(figs_lemma21, mo):
+    mo.hstack([mo.image(src=gif) for gif in figs_lemma21()])
+    return
 
-    #     fig, axes = plt.subplots(2, 2, figsize=(12, 8.6))
 
-    #     # (a) the disk graph itself
-    #     draw(axes[0, 0],
-    #          r"$\mathcal{D}_2$: disk graph, $k=2$ radius types"
-    #          "\n(blue = type-1 $(r_1)$, orange = type-2 $(r_2)$; gray = edges)")
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    # Chapter 3 Figures
+    """)
+    return
 
-    #     # (b) a clique made of one type only
-    #     draw(axes[0, 1],
-    #          r"$C_1$: a clique containing only type-1 disks",
-    #          emph=[0, 1, 2], dim_others=True)
 
-    #     # (c) the maximum clique
-    #     draw(axes[1, 0],
-    #          r"$\mathcal{C}$: a maximum clique of $\mathcal{D}_2$ (here $|\mathcal{C}|=%d$)"
-    #          % len(Cmax),
-    #          emph=Cmax, dim_others=True)
-
-    #     # (d) the type classes inside the maximum clique
-    #     draw(axes[1, 1],
-    #          r"$\mathcal{C}_1,\ \mathcal{C}_2$: maximal same-type cliques inside $\mathcal{C}$",
-    #          emph=Cmax, dim_others=True,
-    #          edge_colors={**{i: TYPE_EDGE[1] for i in C1},
-    #                       **{i: TYPE_EDGE[2] for i in C2}})
-
-    #     fig.suptitle("Section 3 notation on one arrangement of disks", fontsize=13)
-    #     fig.tight_layout()
-    #     fig.savefig("section3_notation.png", dpi=160, bbox_inches="tight")
-    #     return fig   # last expression -> marimo renders it inline
-
-    # notation_drawings()
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Notation Visualizations
+    """)
     return
 
 
@@ -438,6 +411,22 @@ def _(
 
     type_classes_fig = fig_type_classes(scene)              # 𝒞₁, 𝒞₂
     type_classes_fig.savefig("figs/chapter3/notation/type_classes_fig.png", dpi=300)
+    return (
+        disk_graph_fig,
+        max_clique_fig,
+        single_type_clique_fig,
+        type_classes_fig,
+    )
+
+
+@app.cell
+def _(
+    disk_graph_fig,
+    max_clique_fig,
+    single_type_clique_fig,
+    type_classes_fig,
+):
+    disk_graph_fig, single_type_clique_fig, max_clique_fig, type_classes_fig 
     return
 
 
