@@ -45,7 +45,7 @@ def animate_case(p, q, a, b, case, fname, frames=70, hold=18):
                 for u in np.linspace(0, 1, frames)]
         target = b if t_end == 1.0 else a
         subtitle = "o slides along ab, AWAY from m  →  |po| grows"
-    else:
+    elif case == "c":
         wall = xa if q[0] < p[0] else xb            # wall the ray exits through
         s, o0 = ray_hit_vertical(p, q, wall)
         y_end = a[1] if wall == xa else b[1]
@@ -54,6 +54,15 @@ def animate_case(p, q, a, b, case, fname, frames=70, hold=18):
         target = a if wall == xa else b
         m = np.array([wall, p[1]])   # closest point of the wall line to p
         subtitle = "o slides DOWN the slab wall  →  |po| grows"
+    elif case == "v":
+        # Scenario 2: a and b share an x-coordinate; the slab degenerates
+        # to the vertical line through them, and q lies on that line.
+        bottom = a if a[1] <= b[1] else b
+        path = [np.array([xa, q[1] + (bottom[1] - q[1]) * u])
+                for u in np.linspace(0, 1, frames)]
+        target = bottom
+        m = np.array([xa, p[1]])     # closest point of the line to p
+        subtitle = "vertical ab: o slides down to the LOWER endpoint"
 
     fig, ax = plt.subplots(figsize=(7, 5.2))
     ax.set_aspect("equal")
@@ -63,10 +72,17 @@ def animate_case(p, q, a, b, case, fname, frames=70, hold=18):
     ax.axis("off")
 
     # static scenery: slab, segment ab, anchors, p, q, reference distances |pa|,|pb|
-    upper = np.array([[xa, a[1]], [xb, b[1]], [xb, slab_top], [xa, slab_top]])
-    ax.fill(*upper.T, color="#cfe3ff", alpha=.55, zorder=0, label="upper slab $U_{ab}$")
-    ax.plot([xa, xa], [a[1], slab_top], color="#5a8fd6", lw=1.4)
-    ax.plot([xb, xb], [b[1], slab_top], color="#5a8fd6", lw=1.4)
+    if abs(xb - xa) > 1e-9:
+        upper = np.array([[xa, a[1]], [xb, b[1]], [xb, slab_top], [xa, slab_top]])
+        ax.fill(*upper.T, color="#cfe3ff", alpha=.55, zorder=0,
+                label="upper slab $U_{ab}$")
+        ax.plot([xa, xa], [a[1], slab_top], color="#5a8fd6", lw=1.4)
+        ax.plot([xb, xb], [b[1], slab_top], color="#5a8fd6", lw=1.4)
+    else:  # degenerate: the slab IS the vertical line above the segment
+        top_y = max(a[1], b[1])
+        ax.plot([xa, xa], [top_y, slab_top], color="#cfe3ff", lw=7,
+                solid_capstyle="butt", zorder=0)
+        ax.plot([xa, xa], [top_y, slab_top], color="#5a8fd6", lw=1.2, zorder=1)
     ax.plot(*np.c_[a, b], color="k", lw=2.2)
     for pt, name, dy in [(a, "a", -.35), (b, "b", -.35), (p, "p", .25), (q, "q", .25)]:
         ax.plot(*pt, "o", color="#d9480f" if name == "p" else "k", ms=7, zorder=5)
@@ -125,4 +141,10 @@ animate_case(p=np.array([1.1, 3.4]), q=np.array([2.1, 1.2]),
 animate_case(p=np.array([5.3, 2.4]), q=np.array([3.2, 2.0]),
              a=a, b=b, case="c", fname="lemma21_case_c.gif")
 
-print("wrote lemma21_case_b.gif and lemma21_case_c.gif")
+# Scenario 2 (degenerate): a and b share the same x-coordinate; the slab
+# collapses to the vertical line through them, and q sits on that line.
+av, bv = np.array([2.0, 0.0]), np.array([2.0, 1.6])
+animate_case(p=np.array([3.7, 3.0]), q=np.array([2.0, 2.35]),
+             a=av, b=bv, case="v", fname="lemma21_case_vertical.gif")
+
+print("wrote lemma21_case_b.gif, lemma21_case_c.gif and lemma21_case_vertical.gif")
