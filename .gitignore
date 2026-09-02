@@ -13,3 +13,10 @@ __marimo__
 
 # Exported claude.ai chat transcripts (kept locally for Obsidian, not versioned)
 docs/chat-exports/
+
+# Slidev
+slides/node_modules/
+slides/dist/
+slides/.slidev/
+slides/*.pptx
+slides/*.pdf

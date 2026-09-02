@@ -144,7 +144,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "4948b3c95c49fa28",
@@ -160,7 +161,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
+                "file": "docs/Notes on the Maximum Clique paper.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -179,7 +180,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
+                "file": "docs/Notes on the Maximum Clique paper.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -222,7 +223,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
+                "file": "docs/Notes on the Maximum Clique paper.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -249,34 +250,53 @@
       "bases:Create new base": false
     }
   },
-  "active": "60222fd39570ecfa",
+  "active": "962a6b70a97c0ff2",
   "lastOpenFiles": [
-    "docs/Notes on the Maximum Clique paper.md",
-    "docs/Clique paper study checklist.md",
-    "CLAUDE.md",
-    "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
-    "tools/fetch-claude-chat.js",
-    "tools/fetch-claude-chat.js.tmp.4179745.513634838bdd",
-    "tools",
-    "docs/chat-exports/fable-chat-transcript.md",
-    "docs/chat-exports",
-    "docs/fable-chat-transcript.md",
-    "docs/Unconfirmed 781712.crdownload",
-    "docs/seminar-guidlines.pdf",
-    "docs/Unconfirmed 513473.crdownload",
-    "figs/lemma21_case_vertical.gif",
-    "lemma21_case_b.gif",
-    "lemma21_case_c.gif",
-    "lemma21_case_vertical.gif",
-    "figs/chapter2/lemma21/lemma21_case_vertical.gif",
-    "lemma21_sliding_animation.py~",
-    "figs/chapter2/lemma21/lemma21_case_c.gif",
-    "figs/chapter2/lemma21/lemma21_case_b.gif",
-    "__pycache__/lemma21_sliding_animation.cpython-311.pyc",
-    "figs/chapter2/perliminaries/slab_geometry.png",
-    "figs/chapter2/perliminaries/lens_geometry.png",
-    "figs/slab_geometry.png",
-    "README.md",
-    "Untitled.md"
+    "slides/slides-export.pptx",
+    "slides/node_modules/@oxc-parser/binding-linux-x64-musl/parser.linux-x64-musl.node",
+    "slides/node_modules/@oxc-parser/binding-linux-x64-musl/README.md",
+    "slides/node_modules/@oxc-parser/binding-linux-x64-musl/package.json",
+    "slides/node_modules/@rolldown/binding-linux-x64-musl/rolldown-binding.linux-x64-musl.node",
+    "slides/node_modules/@rolldown/binding-linux-x64-musl/README.md",
+    "slides/node_modules/@rolldown/binding-linux-x64-musl/package.json",
+    "slides/node_modules/lightningcss-linux-x64-musl/lightningcss.linux-x64-musl.node",
+    "slides/node_modules/lightningcss-linux-x64-musl/README.md",
+    "slides/node_modules/lightningcss-linux-x64-musl/package.json",
+    "slides/node_modules/lightningcss-linux-x64-musl/LICENSE",
+    "slides/node_modules/playwright-core/lib/webp_codec.wasm",
+    "slides/node_modules/playwright-core/ThirdPartyNotices.txt",
+    "slides/node_modules/playwright-core/types/types.d.ts",
+    "slides/node_modules/playwright-core/README.md",
+    "slides/node_modules/playwright-chromium/README.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/vue.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/react.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/migration.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/gallery-spec.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/video-recording.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/tracing.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/test-generation.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/storage-state.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/session-management.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/running-code.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/request-mocking.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/playwright-tests.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/element-attributes.md",
+    "slides/node_modules/playwright-core/lib/vite/dashboard/assets/safari-na3_-uQk.svg",
+    "slides/node_modules/playwright-core/lib/vite/dashboard/assets/firefox-nightly-Cp5nfeDT.svg",
+    "slides/node_modules/playwright-core/lib/vite/dashboard/assets/firefox-beta-k3eOH_eK.svg",
+    "slides/node_modules/playwright-core/lib/vite/dashboard/assets/firefox-1bWoP6pv.svg",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/SKILL.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-trace/SKILL.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/SKILL.md",
+    "slides/node_modules/playwright-core/lib/vite/traceViewer/playwright-logo.svg",
+    "slides/node_modules/playwright-core/lib/vite/recorder/playwright-logo.svg",
+    "slides/node_modules/playwright-core/lib/vite/dashboard/playwright-logo.svg",
+    "slides/node_modules/playwright-core/lib/tools/dashboard/appIcon.png",
+    "slides/node_modules/playwright-core/lib/server/chromium/appIcon.png",
+    "node_modules/playwright-core/lib/vite/dashboard/assets/safari-na3_-uQk.svg",
+    "node_modules/playwright-core/README.md",
+    "node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/vue.md",
+    "node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/react.md",
+    "node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/migration.md"
   ]
 }
