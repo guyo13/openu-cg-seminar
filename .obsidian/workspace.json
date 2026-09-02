@@ -250,8 +250,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "962a6b70a97c0ff2",
+  "active": "60222fd39570ecfa",
   "lastOpenFiles": [
+    "docs/Notes on the Maximum Clique paper.md",
+    "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
     "slides/slides-export.pptx",
     "slides/node_modules/@oxc-parser/binding-linux-x64-musl/parser.linux-x64-musl.node",
     "slides/node_modules/@oxc-parser/binding-linux-x64-musl/README.md",
@@ -264,8 +266,6 @@
     "slides/node_modules/lightningcss-linux-x64-musl/package.json",
     "slides/node_modules/lightningcss-linux-x64-musl/LICENSE",
     "slides/node_modules/playwright-core/lib/webp_codec.wasm",
-    "slides/node_modules/playwright-core/ThirdPartyNotices.txt",
-    "slides/node_modules/playwright-core/types/types.d.ts",
     "slides/node_modules/playwright-core/README.md",
     "slides/node_modules/playwright-chromium/README.md",
     "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/vue.md",
@@ -296,7 +296,6 @@
     "node_modules/playwright-core/lib/vite/dashboard/assets/safari-na3_-uQk.svg",
     "node_modules/playwright-core/README.md",
     "node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/vue.md",
-    "node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/react.md",
-    "node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/migration.md"
+    "node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/react.md"
   ]
 }

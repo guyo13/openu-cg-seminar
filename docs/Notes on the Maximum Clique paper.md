@@ -13,11 +13,12 @@
 * **A bipartite graph** is a network of dots (vertices) and lines (edges) where you can split all the dots into two separate groups so that no two connected dots belong to the same group.
 ## Notes
 
-Two things worth internalizing for this paper on intersection graphs:
+Things worth internalizing for this paper on intersection graphs:
 
 1. **The graph forgets the geometry.** Two very different disk arrangements can produce the same abstract graph. That's why the paper assumes the disk _representation_ (centers and radii) is given as input — recovering disks from an abstract graph is itself a hard problem (because its a complex constraints satisfaction problem).
 2. **Adjacency = distance condition.** Disks D(a, r₁) and D(b, r₂) intersect exactly when |ab| ≤ r₁ + r₂. This little equivalence is used constantly in the proofs: every claim "these disks are adjacent" is really the claim "their centers are close enough." For unit disks (all radii 1), adjacent simply means centers within distance 2.
 	1. Ergo - "Two disks intersect exactly when the distance between their centers is at most the sum of their radii." 
+3. How can we take the MAX CLIQUE problem which is NP-hard in the general case, and solve it in polynomial time for disk graphs? we leverage the geometic nature of the graph to find a SOUND and COMPLETE method to filter out most of this graph into candidate solutions and take the max solution. SOUND = every candidate is a valid clique, COMPLETE = the method guarantees that we will eventually test the optimal candidate.
 
 Computing a maximum clique in a **unit** disk graph (all radii are 1) was shown in polynomial time a long time ago.
 
@@ -171,7 +172,7 @@ Distinguish 2 scenarios:
 * *type-i disk* is a disk of radius $r_i$
 * $C_i$ is a clique that contains only disks of type $i$
 * $\mathcal{C}$  is a maximum clique of $\mathcal{D}_k$ 
-* $\mathcal{C_i}$  is a maximal clique in $\mathcal{C}$ where all disks are of type $i$
+* $\mathcal{C_i} \subseteq \mathcal{C}$  is a maximal clique in $\mathcal{C}$ where all disks are of type $i$ (**NOT** a maximum clique in $\mathcal{D}_k$ of type $i$ disks).
 
 #### Notation Visualizations
 ##### Disk Graph
@@ -186,5 +187,20 @@ Distinguish 2 scenarios:
 
 ##### Maximum same-type cliques
 ![](../figs/chapter3/notation/type_classes_fig.png)
+
+#### A note about "guessing"
+
+Guessing = exhaustive enumeration over all candidates. Wrong guesses are harmless because the construction guarantees every candidate output is a true clique (soundness, via Lemma 3.1 — which never assumes the guess is right), while the one correct guess guarantees the maximum is reached (completeness). The only validation needed is that the guessed set $\Psi$ itself is pairwise intersecting.
+
 #### The algorithm in a nutshell
-* We guess
+* We guess the subset of radii types that appear in $\mathcal{C}$ (e.g $r_1, r_5, r_{k-1}$) - total $2^k$ possibilities (power-set of a set of $k$ elements)
+* Compute candidate solutions and - 
+* Take the maximum over all the solutions computed from these $2^k$ guesses
+#### Intuition
+_each guess uses slabs + anchor-filtering to carve a candidate set that is automatically two cliques (upper camp, lower camp); the correct guess traps all of C inside its candidate set; bipartite matching then extracts the best mutually-compatible selection across the two camps; the outer max over guesses delivers |C|._ Note the pleasing symmetry with CCJ: their lens split by segment pq gave two camps for equal radii; the slabs restore precisely that two-camp guarantee when radii mix — same skeleton, better split.
+#### How a solution is computed given a radii-set 
+* Note: We consider the worst case for complexity analysis - the radii set contains all $k$ radii types
+* For each disk type $i$ we guess two disk centers $a_i,b_i$ from $\mathcal{C}_i$ where $a_i$ is the leftmost and $b_i$ is rightmost.
+	* We denote the set of all these disk centers $\Psi$
+	* $\Psi$ has $2k$ elements in the worst case
+* 
