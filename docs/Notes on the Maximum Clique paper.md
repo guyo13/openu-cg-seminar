@@ -53,7 +53,7 @@ Because if we divide it in half by line $uv$  we get 2 lens halves which are con
 **Important** - The lens we are examining here is the one formed by the two circles of radius $d$ around $u$ and $v$ it is NOT the intersection of the 2 unit disks centered at $u$ and $v$ - this is the confusing part.
 
 **Important** - We dont really have to construct a lens in the algorithm and do all of the parititioning - simply filtering the vertices by distance to u and v suffices - the resulting subgraph is the co-bipartite one on which we compute the 2 final steps (inversion and bipartite matching). 
-![](figs/chapter2/perliminaries/lens_geometry.png)
+![](../figs/chapter2/perliminaries/lens_geometry.png)
 
 #### Pseudo-code
 
@@ -131,7 +131,7 @@ The deceptive assumption was that CCJ's diameter-pair-plus-lens recipe generaliz
 ## Phase 3 — Lemma 2.1 (the foundation)
 
 #### Visualization of Upper and Lower slabs
-![](slab_geometry.png)
+![](../figs/chapter2/perliminaries/slab_geometry.png)
 
 ### Lemma 2.1
 Let $ab$ be a line segment and let $U_{ab}$ be the upper slab of ab.
@@ -152,9 +152,9 @@ Distinguish 2 scenarios:
 * "Silding" $o$ away from $m$, in either direction, increases the length of $po$ monotonically up to $max\{|pa|, |pb|\}$. 
 * And we get: $|pq| \leq |po| \leq max\{|pa|, |pb|\}$
 #### Scenario 1 Visualized:
-![](figs/chapter2/lemma21/lemma21_case_b.gif)
+![](../figs/chapter2/lemma21/lemma21_case_b.gif)
 
-![](figs/chapter2/lemma21/lemma21_case_c.gif)
+![](../figs/chapter2/lemma21/lemma21_case_c.gif)
 
 
 #### Scenario 2:
@@ -162,7 +162,7 @@ Distinguish 2 scenarios:
 * If $y_a < y_b$ then $|pq| \leq |pa|$
 * Else $y_b < y_a$ then $|pq| \leq |pb|$
 #### Scenario 2 Visualized:
-![](figs/chapter2/lemma21/lemma21_case_vertical.gif)
+![](../figs/chapter2/lemma21/lemma21_case_vertical.gif)
 ## Phase 4 -  The Main Algorithm (Section 3)
 
 #### Notation
@@ -176,15 +176,15 @@ Distinguish 2 scenarios:
 #### Notation Visualizations
 ##### Disk Graph
 
-![](disk_graph_fig.png)
+![](../figs/chapter3/notation/disk_graph_fig.png)
 #####  Single type clique
 
-![](single_type_clique_fig.png)
+![](../figs/chapter3/notation/single_type_clique_fig.png)
 
 ##### Maximum clique
-![](max_clique_fig.png)
+![](../figs/chapter3/notation/max_clique_fig.png)
 
 ##### Maximum same-type cliques
-![](type_classes_fig.png)
+![](../figs/chapter3/notation/type_classes_fig.png)
 #### The algorithm in a nutshell
 * We guess
