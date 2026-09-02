@@ -1,0 +1,216 @@
+{
+  "main": {
+    "id": "f084e3502366273d",
+    "type": "split",
+    "children": [
+      {
+        "id": "b8b3ea180fcfd461",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "60222fd39570ecfa",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "figs/slab_geometry.png"
+              },
+              "icon": "lucide-image",
+              "title": "slab_geometry"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "e345b35a8364e327",
+    "type": "split",
+    "children": [
+      {
+        "id": "4bf4ca8408fcb38f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9965c20fb1103dce",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "e8f411449bb4aa77",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "b88eb644f49ebcd0",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "4948b3c95c49fa28",
+    "type": "split",
+    "children": [
+      {
+        "id": "630861190a7714fa",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "01b1bae7871801ef",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "figs/slab_geometry.png",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "be83fa4e65438194",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "figs/slab_geometry.png",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "b8b31550f727a1d4",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "d6d32c019565be94",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "96308a6eafc22113",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "figs/slab_geometry.png",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "9965c20fb1103dce",
+  "lastOpenFiles": [
+    "figs/lens_geometry.png",
+    "figs/lemma21_case_vertical.gif",
+    "figs/lemma21_case_b.gif",
+    "figs/lemma21_case_c.gif",
+    "figs/chapter3/notation/single_type_clique_fig.png",
+    "figs/chapter3/notation/disk_graph_fig.png",
+    "docs/Notes on the Maximum Clique paper.md",
+    "docs/Clique paper study checklist.md",
+    "docs/Pasted image 20260902104618.png",
+    "docs/Pasted image 20260902104610.png",
+    "docs/Pasted image 20260902104554.png",
+    "docs/Pasted image 20260902104543.png",
+    "docs/Pasted image 20260829211312.png",
+    "figs/chapter3/notation",
+    "figs/chapter3",
+    "README.md",
+    "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
+    "figs",
+    "Unconfirmed 585098.crdownload",
+    "Unconfirmed 322950.crdownload",
+    "Unconfirmed 376747.crdownload",
+    "Unconfirmed 661858.crdownload",
+    "Untitled.md",
+    "docs"
+  ]
+}
