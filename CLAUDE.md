@@ -55,6 +55,25 @@ clique by brute force, so `fig_max_clique` shows a computed result rather than a
 hand-picked one. Each `fig_*(scene, save=None)` returns a matplotlib Figure; `_draw` and
 `_finish` are the shared internals.
 
+## Slides
+
+`slides/` is a self-contained npm project (Slidev v52, seriph theme) — separate from the
+uv/Python project at the root.
+
+```bash
+cd slides
+npm run dev          # live preview
+npm run build        # static site -> slides/dist
+npm run export:pptx  # -> slides-export.pptx (needs playwright-chromium, already a devDep)
+```
+
+Figures are **not** duplicated into `slides/`. They stay at the repo root under `figs/`
+and slides reference them relatively (`../figs/chapter2/...`), which is outside Slidev's
+Vite root — hence `slides/vite.config.ts` widens `server.fs.allow` to the repo root.
+Do not "fix" this by moving figures into `slides/public/`: a `public/figs` symlink was
+tried and fails, because Vite's public-dir handling does not follow directory symlinks.
+Regenerating a figure in the notebook updates the deck with no copy step.
+
 ## Notes and docs
 
 The repo doubles as an Obsidian vault (`.obsidian/` is tracked, and
