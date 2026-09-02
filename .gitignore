@@ -10,3 +10,6 @@ wheels/
 .venv
 
 __marimo__
+
+# Exported claude.ai chat transcripts (kept locally for Obsidian, not versioned)
+docs/chat-exports/
