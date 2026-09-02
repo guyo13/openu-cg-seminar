@@ -1,0 +1,347 @@
+\documentclass[12pt]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\usepackage{float}
+\usepackage{subcaption}
+\graphicspath{{figs/}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\Dk}{\mathcal{D}_k}
+
+\title{The Maximum Clique Problem in a Disk Graph Made Easy\\
+\large A seminar summary of Keil and Mondal, SoCG 2025}
+\author{Guy Or \\ The Open University of Israel}
+\date{September 2026}
+
+\begin{document}
+\maketitle
+
+% =====================================================================
+\section{Introduction}\label{sec:intro}
+
+\paragraph{The problem.}
+A Disk Graph is a graph where each vertex corresponds to a disk in the plane, and there is an edge between two vertices if and only if the corresponding disks intersect.
+The Maximum Clique problem in a disk graph asks for the largest subset of vertices such that every pair of vertices in the subset is connected by an edge, meaning that all corresponding disks intersect with each other.
+The central question addressed by Keil and Mondal's paper~\cite{keil2025clique} is whether this maximum clique problem can be computed in polynomial time for disk graphs with multiple distinct radii.
+The authors consider the case of $k$ distinct radii and provide an algorithm, with runtime $O(n^{2k}\,\mathrm{poly}(n))$, that is polynomial for every fixed $k$ --- placing the problem, parameterized by $k$, in the class XP.
+For the general case of arbitrary radii, the complexity of the problem remains unknown.
+The paper's contribution is significant because it settles a question posed by Cabello in 2015~\cite{cabello2015open}: whether the case of two distinct radii is polynomial-time solvable.
+
+
+\paragraph{Motivation and history.}
+In the context of geometric intersection graphs, the maximum clique problem has been a long-standing challenge, particularly for disk graphs with varying radii.
+The problem is known to be polynomial-time solvable for several related classes such as rectangles~\cite{imai1983rectangles} and trapezoids~\cite{felsner1997trapezoid},
+yet NP-hard for others such as rays~\cite{cabello2013rays}, ellipses and triangles~\cite{ambuhl2005ellipses}, grounded strings~\cite{keil2022strings}, and balls~\cite{bonamy2021jacm}.
+In 1990, Clark, Colbourn and Johnson~\cite{clark1990udg} showed that the case of unit disk graphs (where all disks have an equal radius) can be solved in polynomial time,
+yet the complexity for disks of arbitrary radii has remained unresolved for over three decades.
+In 2015, Cabello~\cite{cabello2015open} explicitly posed even the case of two distinct radii as an open question.
+A factor-2 approximation~\cite{ambuhl2005ellipses} via stabbing all disks with four points~\cite{danzer1986stabbing,carmi2023stabbing} is known to be computable in linear time, and improving it below 1.99 remains open even for two radii.
+Disk graphs have practical applications in wireless networks~\cite{huson1995wireless}, where nodes can be represented as disks with varying transmission ranges, and finding the maximum clique can help optimize network connectivity and resource allocation.
+
+\paragraph{Why the obvious approaches fail.}
+In the general case, finding a maximum clique in a graph is NP-hard, yet the geometric principle used by Clark, Colbourn and Johnson~\cite{clark1990udg} for unit disks --- which relies on the concept of ``lenses'' ---
+allows for a polynomial-time solution: for each guessed farthest pair of disks, the candidate disks split into two cliques that together are guaranteed to contain the maximum clique.
+The maximum clique can then be recovered by running a maximum matching algorithm --- itself polynomial --- on the complement of the candidate graph.
+The naive approach of applying the unit disk algorithm to each radius type separately and then combining the results fails because the maximum clique can contain disks of different radii, and thus is not guaranteed to be contained within any single radius type.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.5\linewidth]{chapter3/notation/type_classes_fig.png}
+  \caption{\small The maximum clique contains disks of both types, it is not contained in any single type class.
+  (Figure by the author; see Appendix~\ref{sec:ai}.)}
+  \label{fig:typeclasses}
+\end{figure}
+
+Attempting to generalize the lens-based approach to multiple radii also fails, as the existence of distinct ``clique regions'' within the lens is no longer guaranteed.
+Keil and Mondal demonstrate this in Section~6.1 of their paper by examining several natural lens-based attempts and showing that they fail to yield the two-clique split that the reduction requires.
+
+\paragraph{Results and roadmap.}
+The main result of the paper is given in \textbf{Theorem 3.2}:
+A maximum clique in a disk graph with $k$ radius types and $n$ vertices is computable in $O(n^{2k}(f(n)+n^2))$ time, where $f(n)$ is the maximum matching time in a bipartite graph with $n$ vertices.
+Specifically, for $k=2$ (and any fixed $k$) the runtime is polynomial, settling Cabello's question.
+The remainder of this summary is organized as follows.
+\textbf{Section~\ref{sec:prelim}} introduces the notation and the graph-theoretic tools used later.
+\textbf{Section~\ref{sec:guessing}} presents the guessing framework and why the seemingly trivial step of choosing the anchors is, in fact, the heart of the problem.
+\textbf{Section~\ref{sec:algo}} describes the algorithm: the geometric lemma, the construction of the slab, and the reduction to bipartite matching, illustrated on a running example.
+\textbf{Section~\ref{sec:conclusions}} discusses the complexity-theoretic status of the result, subsequent work, and open problems.
+Keil and Mondal present in the paper two more important results --- they generalized Theorem 3.2 to ball graphs with $k$ distinct radii whose centers lie on $r$ parallel planes (later relaxed to $r$ planes perpendicular to a common plane), and achieved a speed-up of at least a factor $n^{4/3}$ for precomputing a maximum clique in \textit{unit} disk graphs, for every axis-aligned rectangle determined by the disk centers, so that rectangular range queries can be answered by table look-up.
+This summary focuses only on the first main result since it is the paper's main contribution, while the other two results are further applications of the same slab-based approach they introduce and its properties.
+% =====================================================================
+\section{Preliminaries}\label{sec:prelim}
+\paragraph{Notation.}
+We write $D_{a,r}$ for a disk with center $a$ and radius $r$. For a pair of
+points $a$ and $b$, $\ell_{ab}$ is the line through them, $ab$ is the line
+segment with endpoints $a$ and $b$, and $|ab|$ is the Euclidean distance
+between them. For a point $p$, $\ell^h_p$ and $\ell^v_p$ are the horizontal
+and vertical lines through $p$, respectively.
+
+\paragraph{Concepts.}
+\begin{description}
+  \item[Disk graph.] A disk graph $G$ is an intersection graph of disks in
+    $\mathbb{R}^2$: each vertex of $G$ corresponds to a disk, and two
+    vertices are adjacent in $G$ if and only if their disks intersect.
+
+  \item[Lens.] Given a pair of disks $D_{a,r}$ and $D_{b,r'}$, their common
+    intersection region is called a \emph{lens}, denoted
+    $L(D_{a,r}, D_{b,r'})$.
+
+  \item[Upper and lower slabs.] The \emph{upper slab} $U_{ab}$ of a segment
+    $ab$ is the region above $ab$ bounded by the lines $\ell^v_a$ and
+    $\ell^v_b$; the \emph{lower slab} $\overline{U}_{ab}$ is the region below
+    $ab$ bounded by the same two lines. Equivalently, a slab is an
+    intersection of three half-planes.
+
+  \item[Radius types.] $\mathcal{D}_k$ is a disk graph in which the number of
+    different radii is at most $k$. We denote the radii by
+    $r_1 < r_2 < \dots < r_k$, and a \emph{type-$i$ disk} is a disk of
+    radius $r_i$.
+
+  \item[Cliques.] Given a disk graph $\mathcal{D}_k$: $C_i$ is a clique in
+    $\mathcal{D}_k$ containing only type-$i$ disks, $\mathcal{C}$ is a
+    maximum clique in $\mathcal{D}_k$, and $\mathcal{C}_i$ denotes the
+    type-$i$ disks of $\mathcal{C}$.
+\end{description}
+
+
+
+\paragraph{Basic facts and graph-theoretic tools.}
+
+\begin{description}
+  \item[Intersection condition.] Two disks $D_{a,r}$ and $D_{b,r'}$ intersect
+    if and only if the distance between their centers is at most the sum of
+    their radii: $|ab| \leq r + r'$.
+
+  \item[(T1) Complement.] For a graph $G$, a set of vertices is a clique in
+    $G$ if and only if it is an independent set in the complement
+    $\overline{G}$; hence $\omega(G) = \alpha(\overline{G})$.
+
+  \item[(T2) Co-bipartite graphs.] A graph is \emph{co-bipartite} if its
+    vertex set is the union of two cliques. Its complement is bipartite,
+    since neither clique contributes edges to the complement.
+
+  \item[(T3) Gallai's identity~\cite{gallai1959}.] For any graph $H$ on $m$ vertices,
+    $\alpha(H) = m - \tau(H)$, where $\tau(H)$ is the size of a minimum
+    vertex cover.
+
+  \item[(T4) K\H{o}nig's theorem~\cite{konig1931,kleinbergtardos2006}.] For a \emph{bipartite} graph $H$,
+    $\tau(H) = \nu(H)$, where $\nu(H)$ is the size of a maximum matching.
+    Together with (T3), $\alpha(H) = m - \nu(H)$, which is computable in
+    polynomial time. We write $f(n)$ for the time to compute a maximum
+    matching in an $n$-vertex bipartite graph, e.g.\ via Hopcroft--Karp~\cite{hopcroftkarp1973}.
+\end{description}
+
+% =====================================================================
+\section{The Guessing Framework}\label{sec:guessing}
+\paragraph{Defining the certificate.}
+The main idea of the algorithm is to guess the ``anchors'' of the maximum clique $\mathcal{C}$, which are the \textit{leftmost} and \textit{rightmost} disks of \textbf{each type} in $\mathcal{C}$.
+This guessed set of disks, denoted by $\Psi$, is the \textit{certificate} of the solution and given $\Psi$ --- and the descriptions of the disks --- the clique can be reconstructed in polynomial time from them.
+The reason that the correct guess for $\Psi$ solves the \textit{hard} part of the problem is as follows ---
+consider a disk $D$ of type $i$ that is in the maximum clique $\mathcal{C}$, but is not an anchor, and let $D_{a_i,r_i}$ and $D_{b_i,r_i}$ be the leftmost and rightmost disks of type $i$ in $\mathcal{C}$, respectively.
+Then the center of $D$ must lie \textit{between} the centers of $D_{a_i,r_i}$ and $D_{b_i,r_i}$ in the $x$-direction, specifically either in the slab $U_{a_ib_i}$ or in the slab $\overline{U}_{a_ib_i}$
+and since all disks in $\mathcal{C}$ intersect with each other, $D$ must intersect with both $D_{a_i,r_i}$ and $D_{b_i,r_i}$.
+
+\paragraph{The cost of guessing.}
+$\Psi$ contains \textbf{at most} $2k$ disks, because there are $k$ types and \textbf{each type} contributes at most two anchor disks.
+Thus, the number of possible \textit{guesses} for $\Psi$ is given by $\bigg[\underbrace{\binom{n}{0}}_{\text{type absent}} + \underbrace{\binom{n}{1}}_{a_i = b_i} + \underbrace{\binom{n}{2}}_{a_i \ne b_i} \bigg]^k = O(n^{2k})$.
+The inner sum counts the number of ways to choose the anchors for a single type: either no disks of that type are present in $\mathcal{C}$, or one disk is present (in which case it is both the leftmost and rightmost), or two disks are present (the leftmost and rightmost).
+This factor is raised to the power of $k$ because the choices for each type are independent of the others.
+This guessing ``loop'' is what contributes to the algorithm its dominating component of $O(n^{2k})$.
+Finally, this method represents an \textit{improvement} over a naive exhaustive search for the clique itself:
+enumerating the \textit{certificate} costs $n^{O(k)}$, whereas enumerating candidate cliques directly is exponential in $n$.
+It is the \textbf{size} of the certificate --- at most $2k$ disks, regardless of how large $\mathcal{C}$ is --- that makes the cost affordable.
+
+
+\paragraph{Soundness and Completeness.}
+The algorithm returns the maximum clique by means of keeping the largest clique resulting from all the guesses.
+A core question that is worth asking to validate the correctness of this method is whether this combinatorial scan is \textit{sound} --- i.e. does it only consider valid cliques --- and whether it is \textit{complete} --- i.e. is it guaranteed to encounter and consider a maximum clique in the input graph.
+To prove \textit{completeness} it is simple to observe that by the definition of the optimal $\Psi$ it is always the case that there exist a leftmost and a rightmost disk of any given disk-type that participates in the maximum clique.
+Because the authors allowed for the leftmost and rightmost to be the same disk, it is also true for edge cases where there is only one disk of a certain disk-type in the clique or where all of their centers have the same $x$ coordinate.
+Since the enumeration covers every such choice, some iteration guesses exactly this $\Psi$.
+As shown above, for this guess, every disk of $\mathcal{C}$ is either in $\Psi$ or, is trapped in its type's slab
+and intersects all of $\Psi$, so the construction of Section~\ref{sec:algo} recovers a clique of size $|\mathcal{C}|$.
+
+To prove \textit{soundness} we must be sure that the algorithm never considers a set of vertices that is not a clique. This is achieved by verifying for each guessed $\Psi$ that it is a clique itself, which costs $O(k^2)$ per guess.
+The rest of the algorithm --- the ``inner loop'' that constructs the clique from the given guess for $\Psi$ --- is proved to be sound by Lemma 3.1.
+Lemma 3.1's proof only assumes that a disk lies in its type's slab and intersects every disk of $\Psi$. It never assumes that the guess is correct.
+Hence every valid guess yields a genuine clique.
+Incorrect guesses simply produce smaller ones and lose the final maximum.  
+
+\paragraph{The core innovation and the need for search.}
+The core innovation presented by Keil and Mondal in this paper is the definition of $\Psi$ and the sound use of the slabs as a means for constructing the clique.
+The paper did not discover an efficient way to \textit{find} $\Psi$, and therefore settles for exhaustively enumerating all options,
+with the resulting time complexity nonetheless being the first polynomial-time algorithm for any fixed number of radii.
+An efficient method for finding $\Psi$ would immediately improve the running time, and might bring the general case within reach --- but with an unbounded number of radii the certificate itself may be of size $\Theta(n)$, so this remains open as of writing.  
+
+
+% =====================================================================
+\section{The Algorithm}\label{sec:algo}
+To find a maximum clique in a disk graph $\mathcal{D}_k$, given the description of the disks, the algorithm presented in the paper works as follows:
+\begin{description}
+  \item [Guess.] For each choice of at most two disks per radius type --- possibly none, and possibly the same disk twice --- let $\Psi$ be the chosen disks, and do:
+  \item [Validity-check.] If $\Psi$ is not a clique continue to the next guess.
+  \item [Create the Slabs.] Otherwise construct the slabs defined by each pair of same-type disks in $\Psi$.
+  \item [Filter.] For each disk type $i$ that is present in $\Psi$:
+  Let $X_i$ be the set of all \textit{type-i} disks in $\mathcal{D}_k \setminus \Psi$ whose centers are in the \textbf{upper} slab defined by the \textit{type-i} anchors in $\Psi$ AND are intersecting all disks in $\Psi$.
+  Let $Y_i$ be the set of all \textit{type-i} disks in $\mathcal{D}_k \setminus \Psi$ whose centers are in the \textbf{lower} slab defined by the \textit{type-i} anchors in $\Psi$ AND are intersecting all disks in $\Psi$.
+  Let $X = X_1 \cup \dots \cup X_k, Y = Y_1 \cup \dots \cup Y_k$.
+  \item [Create the max clique in $X \cup Y$.] Let $H$ be the complement of the graph induced by $X \cup Y$,
+  compute the max-independent-set in $H$ using a max-matching algorithm (e.g.\ Hopcroft--Karp~\cite{hopcroftkarp1973}) and let the result be called $MIS_{X \cup Y}$.
+  \item [Assemble.] Let $\hat{\mathcal{C}} = \Psi \cup MIS_{X \cup Y}$ be the candidate solution.
+  \item [Aggregate.] Return the maximum $\hat{\mathcal{C}}$ found, by keeping a running maximum over all candidate solutions. 
+\end{description}
+\subsection{The geometric basis: Lemma 2.1}
+\paragraph{Lemma 2.1} Let $ab$ be a line segment and let $U_{ab}$ be the upper slab of $ab$.
+Let $q$ be a point in $U_{ab}$ and let $p$ be a point (not necessarily in $U_{ab}$) with a $y$-coordinate equal to or larger than the $y$-coordinate of $q$.
+Then $|pq| \leq \max\{|pa|, |pb|\}$.
+
+Lemma 2.1 provides the basic geometric principle which allows the authors of the paper to leverage the slabs to construct the clique.
+The proof discusses two basic scenarios with a total of three distinct cases for which the lemma is shown to be true.
+In the first scenario, the $x$-coordinates of $a$ and $b$ differ and therefore the slab is a two-dimensional area.
+This scenario is further split into two cases --- one in which a ray that starts at $p$ and goes through $q$ intersects the slab at the line segment $ab$ in a point denoted $o$.
+In the second case, the same ray intersects the slab at one of its sides.
+In the first case ``sliding'' the intersection point $o$ away from the point $m$ --- where $pm$ is the line segment perpendicular to $ab$ --- causes $|po|$ to monotonically get longer, up to $\max\{|pa|, |pb|\}$ and since $|pq| \leq |po|$ the lemma inequality follows.
+In the second case, $pm$ is the line segment perpendicular to the side of the slab which the ray intersects. In that case, sliding $o$ downwards and away from $m$ has the same monotonic effect and the same bound holds.
+In the second scenario, the $x$-coordinates of $a$ and $b$ are equal and then the slab collapses into a vertical line, in which case the inequality of the lemma follows directly. 
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{chapter2/lemma21/lemma21_case_b.png}
+    \caption{\small $o$ exits through $ab$ and slides away from $m$.}
+    \label{fig:lemma21b}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{chapter2/lemma21/lemma21_case_c.png}
+    \caption{\small $o$ exits through a vertical side and slides down.}
+    \label{fig:lemma21c}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{chapter2/lemma21/lemma21_case_vertical.png}
+    \caption{\small The degenerate case: $a$ and $b$ share an $x$-coordinate.}
+    \label{fig:lemma21v}
+  \end{subfigure}
+  \caption{\small Illustration of Lemma 2.1: in every case the exit point $o$ moves away from the point of the boundary closest to $p$, so $|po|$ grows monotonically until it reaches $a$ or $b$. (Figures by the author; see Appendix~\ref{sec:ai}.)}
+  \label{fig:lemma21}
+\end{figure}
+
+\subsection{A worked example}
+The figure below illustrates an example iteration of the algorithm on a simple arrangement of disks with $k=2$.
+Here $\Psi$ is the correct guess --- the anchors of the true maximum clique --- and from it the slabs are constructed and the sets $X, Y$ are created from the disks of the arrangement that are not in $\Psi$.
+Note that $Y$ is not empty: it contains $s_6$, which survives the filter but does not intersect $s_3 \in X$, so $X \cup Y$ is not a clique.
+As we will see in Section~\ref{subsec:matching}, the maximum clique found in $X \cup Y$ therefore excludes $s_6$, and the clique reported for this iteration consists of $\Psi$ and $X$ only.
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{chapter3/algorithm/guess.png}
+    \caption{\small The guess: the anchors of each type form $\Psi$.}
+    \label{fig:exguess}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{chapter3/algorithm/slabs.png}
+    \caption{\small The slabs defined by the anchors of each type.}
+    \label{fig:exslabs}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{chapter3/algorithm/filter.png}
+    \caption{\small The survivors: $X$ (upper) and $Y$ (lower).}
+    \label{fig:exfilter}
+  \end{subfigure}
+  \caption{\small One iteration of the algorithm on the running example.
+  A disk survives the filter if its center lies in its own type's slab
+  \emph{and} it intersects every disk of $\Psi$.
+  (Figures by the author; see Appendix~\ref{sec:ai}.)}
+  \label{fig:worked}
+\end{figure}
+
+
+ 
+\subsection{X and Y form two cliques: Lemma 3.1}\label{subsec:lemma31}
+\paragraph{Lemma 3.1} For every $i, j$, where $1 \leq i, j \leq k$, the disks in $X_i \cup X_j$ are mutually adjacent.
+ 
+What Lemma 3.1 actually states is that both $X$ and $Y$ as defined in the algorithm, are cliques in the disk graph:
+any two disks of $X$ lie in some $X_i$ and $X_j$, so pairwise adjacency for all $i, j$ gives that $X$ is a clique, and $Y$ follows by the mirrored argument on the lower slabs.
+The proof is as follows:
+ 
+Let $i, j$ be indices with $1 \leq i, j \leq k$ and let $D_{p,r_i} \in X_i$ and $D_{q,r_j} \in X_j$ --- we show their centers satisfy $|pq| \leq r_i + r_j$, so they intersect.
+The claim is symmetric in the two disks, so we may name the lower one $q$, i.e. $y(q) \leq y(p)$.
+We consider the slab $U_{a_jb_j}$ constructed from the disk centers $D_{a_j, r_j}, D_{b_j, r_j} \in \Psi$.
+Since $D_{q,r_j} \in X_j$, its center lies in $U_{a_jb_j}$, and since $y(q) \leq y(p)$ it follows from Lemma 2.1 that $|pq| \leq \max\{|pa_j|, |pb_j|\}$.
+Now since $D_{p,r_i}$ intersects both $D_{a_j, r_j}$ and $D_{b_j, r_j}$ (because $p \in X_i$, and every disk that survives the filter intersects every disk of $\Psi$) it follows from the intersection condition that $\max\{|pa_j|, |pb_j|\} \leq r_i + r_j$.
+And so $|pq| \leq r_i + r_j$, therefore from the intersection condition it follows that $D_{p,r_i}$ and $D_{q,r_j}$ intersect. $\blacksquare$
+ 
+It is important to observe that Lemma 3.1 does not assume that $\Psi$ is the correct guess, nor that it is a subset of $\mathcal{C}$ --- only that $p$ and $q$ satisfy the two filter conditions: lying in their own type's slab and intersecting every disk of $\Psi$.
+Therefore it is \textit{sound} --- $X, Y$ are indeed cliques even for a suboptimal (but valid) guess of $\Psi$.
+The validity check on $\Psi$ is needed elsewhere: it is what makes the assembled candidate $\Psi \cup MIS_{X \cup Y}$ a clique.
+ 
+
+\subsection{From two cliques to one matching}\label{subsec:matching}
+At this point the algorithm computes the maximum clique inside the candidate graph induced by $\Psi \cup X \cup Y$.
+The maximum clique in the graph induced by $X \cup Y$ is the maximum independent set (``MIS'') in the complementary graph $H$ (T1), where $V(H) = X \cup Y$.
+The algorithm finds the MIS as follows:
+first from Gallai's identity (T3) it is known that $\alpha(H) = |X \cup Y| - \tau(H)$ ---
+where $\alpha(H)$ is the size of the MIS in $H$ and $\tau(H)$ is the size of the minimum vertex cover in $H$.
+Given that $X, Y$ are cliques it follows that $H$ is a bipartite graph (T2) and from K\H{o}nig's theorem on bipartite graphs it follows that the minimum vertex cover in $H$ is exactly the maximum matching in $H$ (T4).
+The maximum matching in $H$ is computed via a maximum matching algorithm (such as Hopcroft--Karp~\cite{hopcroftkarp1973}, which runs in polynomial time for bipartite graphs), from which the independent set itself is recovered by an alternating-path search.
+This results in the maximum clique in $X \cup Y$, denoted here as $MIS_{X \cup Y}$. Since any disk in $X \cup Y$ intersects all the disks in $\Psi$ by construction and since $\Psi$ is a clique, it follows that $\Psi \cup MIS_{X \cup Y}$ is a clique in the graph induced by $\Psi \cup X \cup Y$.
+It is also the maximum clique in it: any clique $K$ in the candidate graph satisfies $|K| \leq |\Psi| + |K \cap (X \cup Y)| \leq |\Psi| + |MIS_{X \cup Y}|$, since $K \cap (X \cup Y)$ is a clique in the graph induced by $X \cup Y$.
+
+\subsection{Running time}
+The outer loop of the algorithm goes through $\left[\binom{n}{0}+\binom{n}{1}+\binom{n}{2}\right]^k = O(n^{2k})$ iterations --- this is the guessing part.
+For each iteration the $\Psi$ pairwise intersection check costs $O(k^2)$, the filter operation costs $O(nk)$ (every disk checked for its center within its type's slab plus that it intersects all of the at most $2k$ disks in $\Psi$),
+building the graph induced by $X \cup Y$ costs $O(n^2)$ and running the maximum matching costs $f(n) = \mathrm{poly}(n)$.
+Since $k \leq n$, the $O(k^2)$ and $O(nk)$ terms are absorbed by $O(n^2)$, and so the total runtime is $O\!\left(n^{2k}\,(f(n) + n^2)\right)$.
+
+\paragraph{Theorem 3.2} Given a set of $n$ disks in the Euclidean plane with $k$ different types of radii, a maximum clique in the corresponding disk graph can be computed in $O\!\left(n^{2k}(f(n) + n^2)\right)$ time. Here $f(n)$ is the time to compute a maximum matching in an $n$-vertex bipartite graph.
+% =====================================================================
+\section{Conclusions and Discussion}\label{sec:conclusions}
+In this paper, Keil and Mondal~\cite{keil2025clique} have shown a method to compute the maximum clique in a disk graph
+with $k$ radius types in $O\!\left(n^{2k}\,(f(n) + n^2)\right)$ run time.
+The algorithm is polynomial for any fixed $k$ --- settling Cabello's question from 2015~\cite{cabello2015open} ---
+placing the problem, parameterized by $k$, in the complexity class \textbf{XP}.
+For an unbounded number of radii the question of the true complexity remains open.
+
+This result represents a significant breakthrough in exact methods for the maximum clique problem
+in disk graphs: the last time a new class of disk graphs was shown to admit an exact polynomial-time
+algorithm was in 1990, by Clark, Colbourn and Johnson~\cite{clark1990udg} for unit disk graphs (the running time for that case has since been improved, most recently in~\cite{espenant2023socg}).
+
+The authors re-used the same framework as the unit disk solution --- exhaustively enumerating candidate
+\textit{certificates}, constructing a co-bipartite candidate graph, and extracting the clique with a maximum
+matching algorithm. Their breakthrough is the geometric structure that replaces the lens: the slab, whose
+properties restrict the search space to $O(n^{2k})$ certificates while the rest of the algorithmic framework
+remains exactly as in Clark, Colbourn and Johnson's method from 1990.
+
+\paragraph{Recent improvements}
+Gao et al.~\cite{gao2026swat} have since given randomized approximation algorithms for both settings.
+Both succeed with constant probability, which can be amplified by repetition.
+For \textit{unit disk graphs} they showed an algorithm that computes a $(1-\varepsilon)$-approximate maximum clique in \textit{expected} time $\widetilde{O}(n/\varepsilon^2)$ --- where $\widetilde{O}$ suppresses polylogarithmic factors.
+For disk graphs with $k$ distinct radii, they showed a parameterized approximation scheme that computes a $(1-\varepsilon)$-approximate maximum clique in expected time
+$\widetilde{O}(f(k)\cdot (1/\varepsilon)^{O(k)} \cdot n)$ for some exponential function $f(k)$ --- that is, the dependence on the number of radii is exponential while the dependence on $n$ remains near-linear.
+These results trade exactness and determinism for speed, so the exact complexity question for disk graphs with unbounded radii remains open.
+
+\bibliographystyle{alpha}
+\bibliography{references}
+
+% =====================================================================
+\section*{Appendix - Declaration on the Use of AI Tools}\label{sec:ai}
+In preparing this seminar (presentation and summary) I used Anthropic's Claude (Fable 5 and Opus 5 models) as well as Google's Gemini (3.1 Pro model) as follows:
+\begin{itemize}
+  \item Exploring SoCG proceedings and selecting the paper.
+  \item Discussing the paper's proofs and testing and challenging my understanding through asking questions, answering AI-generated quizzes and iteratively checking my understanding of the different aspects of the paper and its related background material by stating key mathematical results and asking the AI to find errors or inaccuracies in them.
+  \item Generating the Python and matplotlib code that renders the original figures in this document and in the presentation slides (the examples and their computed cliques are verified programmatically; code can be found at \url{https://github.com/guyo13/openu-cg-seminar}).
+  \item Searching for related subsequent work.
+  \item Planning the structure of the presentation slides and the summary.
+  \item Improving the English phrasing of text I wrote and reviewing the accuracy and the coherence of the mathematical statements I wrote.
+  \item Adding citations where needed and making sure all the bibtex entries are correct.
+\end{itemize}
+\end{document}

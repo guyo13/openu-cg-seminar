@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+__marimo__
+
+# Exported claude.ai chat transcripts (kept locally for Obsidian, not versioned)
+docs/chat-exports/
+
+# Slidev
+slides/node_modules/
+slides/dist/
+slides/.slidev/
+slides/*.pdf
+
+.DS_Store

@@ -1,0 +1,281 @@
+{
+  "main": {
+    "id": "f084e3502366273d",
+    "type": "split",
+    "children": [
+      {
+        "id": "b8b3ea180fcfd461",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2674a008c02e435f",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "docs/seminar-guidlines.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "seminar-guidlines"
+            }
+          },
+          {
+            "id": "9e36667a4092b681",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2"
+            }
+          },
+          {
+            "id": "901f4f036f4a4e68",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "CLAUDE.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CLAUDE"
+            }
+          },
+          {
+            "id": "a04447c39e6fee3d",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/Notes on the Maximum Clique paper.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Notes on the Maximum Clique paper"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "e345b35a8364e327",
+    "type": "split",
+    "children": [
+      {
+        "id": "4bf4ca8408fcb38f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9965c20fb1103dce",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "e8f411449bb4aa77",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "b88eb644f49ebcd0",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "4948b3c95c49fa28",
+    "type": "split",
+    "children": [
+      {
+        "id": "630861190a7714fa",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "01b1bae7871801ef",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
+                "collapseAll": true,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "be83fa4e65438194",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "docs/Notes on the Maximum Clique paper.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "b8b31550f727a1d4",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "d6d32c019565be94",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "96308a6eafc22113",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "docs/Notes on the Maximum Clique paper.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "9e36667a4092b681",
+  "lastOpenFiles": [
+    "README.md.tmp.1789293.6e20b647b0a5",
+    "docs/seminal-work/Unconfirmed 879078.crdownload",
+    "docs/seminal-work/Unconfirmed 263936.crdownload",
+    "docs/seminal-work/Unconfirmed 482995.crdownload",
+    "docs/seminal-work/Guy_Or_CG_Seminar .pdf",
+    "docs/seminal-work/Unconfirmed 714521.crdownload",
+    "docs/seminar-guidlines.pdf",
+    "docs/seminal-work/Guy_Or_CG_Seminar.pdf",
+    "docs/seminal-work/Unconfirmed 741217.crdownload",
+    "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
+    "docs/Notes on the Maximum Clique paper.md",
+    "figs/chapter2/lemma21/lemma21_case_vertical.png",
+    "figs/chapter2/lemma21/lemma21_case_c.png",
+    "figs/chapter2/lemma21/lemma21_case_b.png",
+    "make_stils.py",
+    "docs/Clique paper study checklist.md",
+    "docs/qa-armor-notes.md",
+    "README.md",
+    "figs/chapter3/algorithm/lemma31_relay.png",
+    "slides/dist/assets/x_clique-TEcCmPpJ.png",
+    "slides/dist/assets/type_classes_fig-sOZpRt6y.png",
+    "slides/dist/assets/sort_trap-Cc7xD97b.png",
+    "slides/dist/assets/slabs-CbkK3yhO.png",
+    "slides/dist/assets/slab_geometry-BkBXu65I.png",
+    "slides/dist/assets/missing_edges-Csyi7REJ.png",
+    "slides/mathtest.md",
+    "docs/fable-chat-transcript.md",
+    "CLAUDE.md",
+    "slides/node_modules/@oxc-parser/binding-linux-x64-musl/README.md",
+    "slides/node_modules/@rolldown/binding-linux-x64-musl/README.md",
+    "slides/node_modules/lightningcss-linux-x64-musl/README.md",
+    "slides/node_modules/playwright-core/README.md",
+    "slides/node_modules/playwright-chromium/README.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/vue.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/react.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/migration.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/gallery-spec.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/video-recording.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/tracing.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/test-generation.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/storage-state.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/session-management.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/running-code.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/request-mocking.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/playwright-tests.md",
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/element-attributes.md"
+  ]
+}
