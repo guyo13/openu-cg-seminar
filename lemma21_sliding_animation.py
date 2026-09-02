@@ -44,7 +44,7 @@ def animate_case(p, q, a, b, case, fname, frames=70, hold=18):
         path = [a + (t_o + (t_end - t_o) * u) * (b - a)
                 for u in np.linspace(0, 1, frames)]
         target = b if t_end == 1.0 else a
-        subtitle = "o slides along ab, AWAY from m  →  |po| grows"
+        subtitle = "o slides along ab, AWAY from m  →  |po'| grows"
     elif case == "c":
         wall = xa if q[0] < p[0] else xb            # wall the ray exits through
         s, o0 = ray_hit_vertical(p, q, wall)
@@ -53,7 +53,7 @@ def animate_case(p, q, a, b, case, fname, frames=70, hold=18):
                 for u in np.linspace(0, 1, frames)]
         target = a if wall == xa else b
         m = np.array([wall, p[1]])   # closest point of the wall line to p
-        subtitle = "o slides DOWN the slab wall  →  |po| grows"
+        subtitle = "o slides DOWN the slab wall  →  |po'| grows"
     elif case == "v":
         # Scenario 2: a and b share an x-coordinate; the slab degenerates
         # to the vertical line through them, and q lies on that line.
@@ -63,6 +63,12 @@ def animate_case(p, q, a, b, case, fname, frames=70, hold=18):
         target = bottom
         m = np.array([xa, p[1]])     # closest point of the line to p
         subtitle = "vertical ab: o slides down to the LOWER endpoint"
+
+    # o is the original exit point (where the slide starts); o' is its moving
+    # position along the slide. In the degenerate case the two coincide with q,
+    # so there is nothing extra to show.
+    o0 = path[0]
+    show_origin = np.linalg.norm(o0 - q) > 1e-9
 
     fig, ax = plt.subplots(figsize=(7, 5.2))
     ax.set_aspect("equal")
@@ -95,11 +101,19 @@ def animate_case(p, q, a, b, case, fname, frames=70, hold=18):
     ax.annotate("m", m, textcoords="offset points", xytext=(6, -16),
                 fontsize=13, fontstyle="italic", color="#2b8a3e")
 
+    # original ray p->q->o, kept on screen as the baseline the slide stretches
+    # from (degenerate case: o0 == q, so this is just pq)
+    ax.plot(*np.c_[p, q, o0], ls="--", color="#d9480f", lw=1.6,
+            alpha=.45, zorder=2)
+    if show_origin:
+        ax.plot(*o0, "o", color="#d9480f", ms=7, alpha=.45, zorder=5)
+        ax.annotate("o", o0, textcoords="offset points", xytext=(8, -17),
+                    fontsize=13, fontstyle="italic", color="#d9480f", alpha=.75)
+
     ax.set_title("Lemma 2.1 — " + subtitle, fontsize=12)
 
     # dynamic artists
-    ray_ln,  = ax.plot([], [], "--", color="#d9480f", lw=1.6)     # ray p->o
-    po_ln,   = ax.plot([], [], "-",  color="#d9480f", lw=2.4)     # segment po
+    po_ln,   = ax.plot([], [], "-",  color="#d9480f", lw=2.4)     # segment po'
     o_dot,   = ax.plot([], [], "o",  color="#d9480f", ms=8, zorder=6)
     o_lbl    = ax.text(0, 0, "", fontsize=13, fontstyle="italic",
                        color="#d9480f", zorder=6)
@@ -112,17 +126,17 @@ def animate_case(p, q, a, b, case, fname, frames=70, hold=18):
     def draw(i):
         o = seq[i]
         po_ln.set_data(*np.c_[p, o])
-        ray_ln.set_data(*np.c_[p, q, o])
         o_dot.set_data([o[0]], [o[1]])
         o_lbl.set_position((o[0] + 0.14, o[1] + 0.14))
-        o_lbl.set_text("o")
+        o_lbl.set_text("o'" if show_origin else "o")
         d = np.linalg.norm(p - o)
         done = i >= frames - 1
-        readout.set_text(f"|po| = {d:4.2f}   max(|pa|,|pb|) = {dmax:4.2f}"
-                         + ("\n✓ |pq| ≤ |po| ≤ max(|pa|,|pb|)" if done else ""))
+        name = "po'" if show_origin else "po"
+        readout.set_text(f"|{name}| = {d:4.2f}   max(|pa|,|pb|) = {dmax:4.2f}"
+                         + (f"\n✓ |pq| ≤ |{name}| ≤ max(|pa|,|pb|)" if done else ""))
         o_dot.set_color("#2b8a3e" if done else "#d9480f")
         o_lbl.set_color("#2b8a3e" if done else "#d9480f")
-        return po_ln, ray_ln, o_dot, o_lbl, readout
+        return po_ln, o_dot, o_lbl, readout
 
     anim = FuncAnimation(fig, draw, frames=len(seq), interval=45, blit=True)
     anim.save(fname, writer=PillowWriter(fps=22))
