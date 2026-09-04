@@ -232,3 +232,9 @@ Two small reading notes on the lemma statement itself, so the quantifiers don't 
 
 1. Lemma 3.1 says "the disks in Xᵢ ∪ X_j are mutually adjacent for every i, j." Since i = j is allowed, this covers within-type adjacency too, and since any two disks of X lie in _some_ Xᵢ and X_j, the lemma really does prove all of X is one clique — pairwise statements suffice.
 2. The paper proves only the X side and says "similarly Y." For your presentation, be ready to state why that's legitimate: the lower-slab case is the mirror image — reflect the plane across a horizontal line and upper slabs become lower slabs, Lemma 2.1 flips accordingly (the point p now has y-coordinate ≤ q's). Nothing new happens, but a picky audience member might ask you to say so out loud.
+
+### Algorithm Visualizations
+
+
+![](../figs/chapter3/algorithm/guess.png)
+![](../figs/chapter3/algorithm/slabs.png)![](../figs/chapter3/algorithm/filter.png)

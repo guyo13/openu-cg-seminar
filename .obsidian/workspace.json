@@ -6,7 +6,6 @@
       {
         "id": "b8b3ea180fcfd461",
         "type": "tabs",
-        "dimension": 37.185056472632496,
         "children": [
           {
             "id": "2674a008c02e435f",
@@ -49,8 +48,9 @@
             }
           },
           {
-            "id": "f1baca40dd884549",
+            "id": "0672149eae3d69ac",
             "type": "leaf",
+            "pinned": true,
             "state": {
               "type": "markdown",
               "state": {
@@ -58,31 +58,13 @@
                 "mode": "source",
                 "source": false
               },
+              "pinned": true,
               "icon": "lucide-file",
               "title": "Notes on the Maximum Clique paper"
             }
           }
         ],
         "currentTab": 3
-      },
-      {
-        "id": "3b81d176d52c7b5d",
-        "type": "tabs",
-        "dimension": 62.814943527367504,
-        "children": [
-          {
-            "id": "60222fd39570ecfa",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2"
-            }
-          }
-        ]
       }
     ],
     "direction": "vertical"
@@ -144,8 +126,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "4948b3c95c49fa28",
@@ -250,18 +231,20 @@
       "bases:Create new base": false
     }
   },
-  "active": "f1baca40dd884549",
+  "active": "0672149eae3d69ac",
   "lastOpenFiles": [
+    "figs/chapter3/algorithm/guess.png",
+    "figs/chapter3/algorithm/slabs.png",
+    "figs/chapter3/notation/disk_graph_fig.png",
+    "docs/Notes on the Maximum Clique paper.md",
+    "figs/chapter3/notation/type_classes_fig.png",
+    "figs/chapter3/algorithm/filter.png",
     "__pycache__/chapter2_figures.cpython-311.pyc",
     "chapter2_figures.py",
     "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
-    "docs/Notes on the Maximum Clique paper.md",
     "__pycache__/scene_figures.cpython-311.pyc",
     "scene_figures.py",
-    "figs/chapter3/algorithm/slabs.png",
     "figs/chapter3/algorithm/invalid_guess.png",
-    "figs/chapter3/algorithm/guess.png",
-    "figs/chapter3/algorithm/filter.png",
     "figs/chapter3/algorithm",
     "algorithm-s5-s7.bundle",
     "Unconfirmed 605853.crdownload",
@@ -270,7 +253,6 @@
     "docs/Clique paper study checklist.md",
     "CLAUDE.md",
     "slides/slides-export.pptx",
-    "slides/node_modules/@oxc-parser/binding-linux-x64-musl/parser.linux-x64-musl.node",
     "slides/node_modules/@oxc-parser/binding-linux-x64-musl/README.md",
     "slides/node_modules/@rolldown/binding-linux-x64-musl/README.md",
     "slides/node_modules/lightningcss-linux-x64-musl/README.md",
@@ -296,7 +278,6 @@
     "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/SKILL.md",
     "slides/node_modules/playwright-core/lib/tools/skills/playwright-trace/SKILL.md",
     "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/SKILL.md",
-    "slides/node_modules/playwright-core/lib/vite/traceViewer/playwright-logo.svg",
-    "slides/node_modules/playwright-core/lib/vite/recorder/playwright-logo.svg"
+    "slides/node_modules/playwright-core/lib/vite/traceViewer/playwright-logo.svg"
   ]
 }
