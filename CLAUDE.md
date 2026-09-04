@@ -25,35 +25,63 @@ Always run from the repo root — every figure output path in the notebook is re
 
 ## Architecture
 
-**`cg-notebook.py` is the single source of every figure.** It is a marimo notebook in
-pure-Python cell format: `@app.cell`-decorated functions whose *parameters* are their
-dependencies and whose *return tuple* is what they export to later cells. marimo
-regenerates this structure, so edit it through `marimo edit` rather than hand-rewriting
-cells — reordering or renaming by hand silently breaks the dataflow graph. The
-`__generated_with` version string at the top must match the installed marimo.
+**`cg-notebook.py` is a thin orchestrator, not the figure code.** It is a marimo
+notebook in pure-Python cell format: `@app.cell`-decorated functions whose *parameters*
+are their dependencies and whose *return tuple* is what they export to later cells.
+marimo regenerates this structure, so edit it through `marimo edit` rather than
+hand-rewriting cells — reordering or renaming by hand silently breaks the dataflow
+graph, and defining the same name in two cells is a hard error. The `__generated_with`
+version string at the top must match the installed marimo.
 
-**Figures are written as a side effect of running the notebook.** Cells call
-`fig.savefig("figs/chapter<N>/<topic>/<name>.png", dpi=300)` with hardcoded paths.
-The `chapter<N>` numbering tracks *the paper's* sections, not the notebook's own order.
-Note the directory `figs/chapter2/perliminaries/` is misspelled and one savefig call
-contains a double slash — both work, so leave them alone unless you update every
-reference together.
+Every figure function lives in one of three plain modules at the repo root; the notebook
+only imports them, calls them, saves the result, and displays it:
 
-**`lemma21_sliding_animation.py` is the only local module the notebook imports**
-(`import lemma21_sliding_animation as l2anim`). Standalone matplotlib + `PillowWriter`.
-Its entry point is `animate_case(p, q, a, b, case, fname)`, which writes a GIF and
-returns `fname` so notebook cells can feed the result straight into `mo.image`. The
-`case` argument selects the geometry: `"b"` (exit point slides along segment ab),
-`"c"` (slides down a vertical slab wall), `"v"` (degenerate — a and b share an
-x-coordinate and the slab collapses to a line). Cases b/c correspond to Figure 1(b)-(c)
-of the paper; `"v"` is an added degenerate scenario.
+| Module | Imported as | Provides |
+| --- | --- | --- |
+| `chapter2_figures.py` | `lens_geometry`, `slab_geom` | Two no-arg functions returning a Figure |
+| `lemma21_sliding_animation.py` | `l2anim` | `animate_case(...)` — writes a GIF, returns its path |
+| `scene_figures.py` | `sf` | The D_2 scene plus all Chapter 3 figures |
 
-**Shared visual conventions.** `TYPE_FACE` / `TYPE_EDGE` (defined in the first cell) map
-radius type 1→blue, 2→orange and are used by every Chapter 3 figure. `make_scene()`
-builds the example D_2 arrangement and computes both adjacency and the *exact* maximum
-clique by brute force, so `fig_max_clique` shows a computed result rather than a
-hand-picked one. Each `fig_*(scene, save=None)` returns a matplotlib Figure; `_draw` and
-`_finish` are the shared internals.
+Prefer adding a figure to the relevant module and calling it from a thin cell. Keeping
+plotting code in the notebook is what the modules were extracted to undo.
+
+**Figures are written as a side effect of running the notebook**, to hardcoded relative
+paths (`figs/chapter<N>/<topic>/<name>.png`), so always run from the repo root. The
+`chapter<N>` numbering tracks *the paper's* sections, not the notebook's own order.
+Note `figs/chapter2/perliminaries/` is misspelled and one savefig call contains a double
+slash — both work, so leave them alone unless you update every reference together.
+
+**`scene_figures.py` owns the shared visual language.** `TYPE_FACE` / `TYPE_EDGE` map
+radius type 1→blue, 2→orange. `make_scene()` builds the 8-disk `BASE_DISKS` arrangement
+and computes adjacency plus the *exact* maximum clique by brute force, so
+`fig_max_clique` shows a computed result rather than a hand-picked one.
+`make_algo_scene()` runs one honest iteration of the algorithm over the extended 11-disk
+`ALGO_DISKS` (same disks plus s6/b4/b5), yielding Psi, the slabs, and the X/Y survivors
+used by the walk-through figures. Notation figures take `scene`; algorithm figures take
+`ascene`.
+
+Every `fig_*` returns a matplotlib Figure and accepts `save=`, which routes through
+`_finish` (`dpi=300, bbox_inches="tight"`). The Chapter 3 *notation* cell deliberately
+does not use `save=` — it calls `savefig(..., dpi=300)` with no tight crop, matching how
+those PNGs were originally produced. The *algorithm* cell does use `save=`. Don't
+"unify" these without regenerating and re-committing the affected figures.
+
+**`animate_case(p, q, a, b, case, fname)`** writes a GIF and returns `fname`, so cells
+feed it straight into `mo.image`. `case` selects the geometry: `"b"` (exit point slides
+along segment ab), `"c"` (slides down a vertical slab wall), `"v"` (degenerate — a and b
+share an x-coordinate and the slab collapses to a line). Cases b/c are Figure 1(b)-(c)
+of the paper; `"v"` is an added degenerate scenario. In b and c the original ray
+p->q->o stays on screen faded and dashed as the baseline, the start point is labelled
+`o` and the moving one `o'`; in the degenerate case the two coincide with q, so only the
+dashed pq baseline is drawn.
+
+**Inspecting a live notebook.** `marimo[mcp]` is a dependency, so while
+`uv run marimo edit cg-notebook.py` is running, the marimo MCP tools can read the live
+session: `lint_notebook` and `get_notebook_errors` for validation,
+`get_cell_dependency_graph` for variable ownership and multiply-defined names, and
+`get_cell_outputs` for rendered results. They are read-only — cell edits still go
+through the marimo UI. The server is bound at Claude Code startup, so it is unavailable
+in a session that began before it was configured.
 
 ## Slides
 
