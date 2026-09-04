@@ -155,6 +155,7 @@ Distinguish 2 scenarios:
 #### Scenario 1 Visualized:
 ![](../figs/chapter2/lemma21/lemma21_case_b.gif)
 
+
 ![](../figs/chapter2/lemma21/lemma21_case_c.gif)
 
 
@@ -197,10 +198,37 @@ Guessing = exhaustive enumeration over all candidates. Wrong guesses are harmles
 * Compute candidate solutions and - 
 * Take the maximum over all the solutions computed from these $2^k$ guesses
 #### Intuition
-_each guess uses slabs + anchor-filtering to carve a candidate set that is automatically two cliques (upper camp, lower camp); the correct guess traps all of C inside its candidate set; bipartite matching then extracts the best mutually-compatible selection across the two camps; the outer max over guesses delivers |C|._ Note the pleasing symmetry with CCJ: their lens split by segment pq gave two camps for equal radii; the slabs restore precisely that two-camp guarantee when radii mix — same skeleton, better split.
+_each guess uses slabs + anchor-filtering to carve a candidate set that is automatically two cliques (upper camp, lower camp); the correct guess traps all of $\mathcal{C}$ inside its candidate set; bipartite matching then extracts the best mutually-compatible selection across the two camps; the outer max over guesses delivers $|\mathcal{C}|$._ Note the pleasing symmetry with CCJ: their lens split by segment $pq$ gave two camps for equal radii; the slabs restore precisely that two-camp guarantee when radii mix — same skeleton, better split.
 #### How a solution is computed given a radii-set 
 * Note: We consider the worst case for complexity analysis - the radii set contains all $k$ radii types
 * For each disk type $i$ we guess two disk centers $a_i,b_i$ from $\mathcal{C}_i$ where $a_i$ is the leftmost and $b_i$ is rightmost.
 	* We denote the set of all these disk centers $\Psi$
 	* $\Psi$ has $2k$ elements in the worst case
-* 
+* For all $i \leq k$ define $X_i$ as the set of disks whose center is in $U_{a_ib_i}$ and intersect all the disks in $\Psi$.
+* Similarily define $Y_i$ as the set of disks whose center is in $\overline{U}_{a_ib_i}$ and intersect all the disks in $\Psi$.
+* The unions $X = \cup_{i=1}^k X_i$ and $Y = \cup_{i=1}^k Y_i$ are cliques in $\mathcal{D}_k$.
+* Therefore the subgraph of $\mathcal{D}_k$ composed of $X \cup Y$ is co-bipartite (any 2 cliques in a graph form a co-bipartite graph)
+* Therefore its complement, denoted $H$ is Bipartite.
+* Because $\Psi \subseteq \mathcal{C}$ it follows that $\mathcal{C} \subseteq (\Psi \cup X \cup Y)$
+* From the last to statements it follows that we can compute $\mathcal{C}$ from a maximum bipartite matching in $H\ \blacksquare$.
+##### Explanations
+**C ⊆ Ψ ∪ X ∪ Y for the correct guess:** follows from the _definitions_ of leftmost/rightmost (centers of C's disks lie in the slabs) and of a clique (C's disks intersect all of Ψ ⊆ C). No geometry needed.
+**Why Ψ can be excluded from the hard computation.** Every disk in X ∪ Y intersects _all_ of Ψ — that's the filter that defined X and Y in the first place. And Ψ itself is pairwise intersecting (for the correct guess because Ψ ⊆ C; for other guesses because we discard the ones that fail the check). So Ψ's disks are adjacent to each other _and_ to every candidate. Consequence: K is a clique in the graph on X ∪ Y **if and only if** K ∪ Ψ is a clique in the whole candidate set. Ψ imposes no constraint on the choice within X ∪ Y — it's universally compatible, so you can solve the interesting problem on X ∪ Y alone and append Ψ to whatever comes out.
+**The accounting for the correct guess.** C ⊆ Ψ ∪ X ∪ Y, and Ψ ⊆ C. So C ∖ Ψ is a clique living inside X ∪ Y, meaning the max clique of the graph on X ∪ Y has size ≥ |C| − |Ψ|. The algorithm outputs Ψ ∪ (max clique of X ∪ Y), which therefore has size ≥ |C| — and by soundness it can't exceed |C|. Equality.
+Max clique in the candidate graph on X ∪ Y = max **independent set** in its complement H; H is bipartite (sides = X's complement-vertices and Y's complement-vertices, since X and Y are cliques, all complement-edges run between the camps... plus possibly _within_? No — X a clique means no complement-edges inside X; same for Y — that's precisely bipartiteness of H); and in bipartite graphs, max independent set = n − max matching by König. That three-hop chain — clique → complement independent set → König → matching — is the part audiences ask to see slowly, so rehearse saying it in one breath.
+Xᵢ takes **type-i disks only** with centers in U_{aᵢbᵢ}. The paper's sentence ("every disk that has its center in U_{aᵢbᵢ}…") reads ambiguously, but Lemma 3.1's proof settles it — the i = j case uses "p and q correspond to type-i disks" to get the 2rᵢ bound, which requires Xᵢ's members to have radius rᵢ. A type-j disk whose center happens to fall in type-i's slab isn't lost, of course: if it's in C, it lies in its _own_ type's slab (that's what leftmost/rightmost of type j means), which is all that completeness needs. Good defensive detail to have ready if someone asks "wait, which disks go in which Xᵢ?"
+
+###### The entire mathematical content is Lemma 3.1
+"It now suffices to show that the disks in X (similarly, the disks in Y ) are mutually adjacent."
+Why "suffices" is the right word — it's worth tracing what's genuinely left once X and Y are cliques, because everything else in the argument is either definitional or classical:
+
+- C ⊆ Ψ ∪ X ∪ Y for the correct guess: follows from the _definitions_ of leftmost/rightmost (centers of C's disks lie in the slabs) and of a clique (C's disks intersect all of Ψ ⊆ C). No geometry needed.
+- Complement of the graph on X ∪ Y is bipartite: immediate _given_ X, Y are cliques — no complement-edges inside either camp.
+- Max clique from matching: König, textbook.
+
+So the entire original mathematical content of Section 3 is concentrated in one place: Lemma 3.1 (which itself is bookkeeping on top of Lemma 2.1). Everything else is assembly. That's a great framing sentence for your talk, by the way: "the paper's whole new idea fits in one lemma about slabs; the rest is 1990s-vintage machinery" — it makes the "Made Easy" title land.
+
+Two small reading notes on the lemma statement itself, so the quantifiers don't trip you:
+
+1. Lemma 3.1 says "the disks in Xᵢ ∪ X_j are mutually adjacent for every i, j." Since i = j is allowed, this covers within-type adjacency too, and since any two disks of X lie in _some_ Xᵢ and X_j, the lemma really does prove all of X is one clique — pairwise statements suffice.
+2. The paper proves only the X side and says "similarly Y." For your presentation, be ready to state why that's legitimate: the lower-slab case is the mirror image — reflect the plane across a horizontal line and upper slabs become lower slabs, Lemma 2.1 flips accordingly (the point p now has y-coordinate ≤ q's). Nothing new happens, but a picky audience member might ask you to say so out loud.

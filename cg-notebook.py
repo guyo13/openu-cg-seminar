@@ -6,29 +6,13 @@ app = marimo.App(width="medium")
 
 @app.cell
 def _():
-
-    import itertools
-    from types import SimpleNamespace
     import matplotlib.pyplot as plt
     import numpy as np
     from matplotlib.patches import Polygon, Circle
     import math
     import marimo as mo
 
-    TYPE_FACE = {1: "#a5d8ff", 2: "#ffd8a8"}      # fill by radius type
-    TYPE_EDGE = {1: "#1971c2", 2: "#e8590c"}
-    return (
-        Circle,
-        Polygon,
-        SimpleNamespace,
-        TYPE_EDGE,
-        TYPE_FACE,
-        itertools,
-        math,
-        mo,
-        np,
-        plt,
-    )
+    return Circle, Polygon, math, mo, np, plt
 
 
 @app.cell(hide_code=True)
@@ -228,7 +212,7 @@ def _(np):
         av, bv = np.array([2.0, 0.0]), np.array([2.0, 1.6])
         s2 = l2anim.animate_case(p=np.array([3.7, 3.0]), q=np.array([2.0, 2.35]),
                      a=av, b=bv, case="v", fname="figs/chapter2/lemma21/lemma21_case_vertical.gif")
-        return s1_b, s1_b, s2
+        return s1_b, s1_c, s2
 
     return (figs_lemma21,)
 
@@ -256,160 +240,26 @@ def _(mo):
 
 
 @app.cell
-def _(Circle, SimpleNamespace, TYPE_EDGE, TYPE_FACE, itertools, np, plt):
-    # Section 3 notation, visualized — function-per-figure edition for marimo.
-    #
-    # Paste this block into ONE cell (it only defines functions), then render each
-    # figure in its own cell:
-    #
-    #     scene = make_scene()
-    #     fig_disk_graph(scene)                 # D_k
-    #     fig_single_type_clique(scene)         # C_1
-    #     fig_max_clique(scene)                 # calligraphic C
-    #     fig_type_classes(scene)               # calligraphic C_1, C_2
-    #
-    # Each fig_* function returns a matplotlib Figure (marimo renders it if it's
-    # the cell's last expression) and accepts save="filename.png" to export.
+def _():
+    import scene_figures as sf
 
-    def make_scene(r1=0.8, r2=1.4):
-        """Build the example D_2 arrangement; compute adjacency and the exact
-        maximum clique (brute force on the geometry). Returns a SimpleNamespace
-        holding everything the drawing functions need."""
-        disks = [  # (x,     y,    radius, name)
-            ( 0.0,  0.0, r1, "s1"),
-            ( 1.1,  0.2, r1, "s2"),
-            ( 0.5,  0.9, r1, "s3"),
-            ( 2.6, -0.5, r1, "s4"),
-            (-1.6, -1.4, r1, "s5"),
-            ( 1.8,  1.2, r2, "b1"),
-            ( 0.9, -1.0, r2, "b2"),
-            (-2.4,  0.6, r2, "b3"),
-        ]
-        pos = np.array([[d[0], d[1]] for d in disks])
-        rad = np.array([d[2] for d in disks])
-        nam = [d[3] for d in disks]
-        n = len(disks)
-        typ = [1 if r == r1 else 2 for r in rad]
-
-        # disks intersect  <=>  |ab| <= r_a + r_b
-        adj = [[i != j and np.linalg.norm(pos[i] - pos[j]) <= rad[i] + rad[j] + 1e-12
-                for j in range(n)] for i in range(n)]
-
-        def _is_clique(S):
-            return all(adj[i][j] for i, j in itertools.combinations(S, 2))
-
-        cmax = max((S for m in range(n, 0, -1)
-                    for S in itertools.combinations(range(n), m) if _is_clique(S)),
-                   key=len)
-        return SimpleNamespace(
-            pos=pos, rad=rad, name=nam, n=n, typ=typ, adj=adj,
-            cmax=list(cmax),
-            c1=[i for i in cmax if typ[i] == 1],   # calligraphic C_1
-            c2=[i for i in cmax if typ[i] == 2],   # calligraphic C_2
-        )
-
-
-    def _draw(scene, title, emph=None, dim_others=False, edge_colors=None):
-        """Shared renderer: one arrangement, optional emphasized subset."""
-        s = scene
-        emph = set(emph or [])
-        fig, ax = plt.subplots(figsize=(6.4, 5))
-        for i in range(s.n):
-            strong = (not dim_others) or (i in emph)
-            ec = (edge_colors or {}).get(
-                i, "#333" if i in emph else TYPE_EDGE[s.typ[i]])
-            ax.add_patch(Circle(s.pos[i], s.rad[i],
-                                facecolor=TYPE_FACE[s.typ[i]], edgecolor=ec,
-                                alpha=.85 if strong else .18,
-                                lw=2.6 if i in emph else 1.2, zorder=2))
-            ax.plot(*s.pos[i], "o", color="k", ms=3,
-                    alpha=1 if strong else .25, zorder=4)
-            ax.annotate(s.name[i], s.pos[i], textcoords="offset points",
-                        xytext=(5, 5), fontsize=9,
-                        alpha=1 if strong else .3, zorder=5)
-        for i, j in itertools.combinations(range(s.n), 2):
-            if s.adj[i][j]:
-                both = i in emph and j in emph
-                ax.plot(*np.c_[s.pos[i], s.pos[j]],
-                        color="#444" if both and emph else "#999",
-                        lw=2.2 if both and emph else 0.9,
-                        alpha=.9 if (both or not dim_others) else .15, zorder=3)
-        ax.set_title(title, fontsize=11)
-        ax.set_aspect("equal"); ax.set_xlim(-4.1, 4.3); ax.set_ylim(-3.1, 3.1)
-        ax.axis("off")
-        fig.tight_layout()
-        return fig
-
-
-    def _finish(fig, save):
-        if save:
-            fig.savefig(save, dpi=160, bbox_inches="tight")
-        return fig
-
-
-    def fig_disk_graph(scene, save=None):
-        """(a) D_2 — the disk graph: disks colored by radius type, gray edges."""
-        return _finish(_draw(
-            scene,
-            r"$\mathcal{D}_2$: disk graph, $k=2$ radius types"
-            "\n(blue = type-1 $(r_1)$, orange = type-2 $(r_2)$; gray = edges)"),
-            save)
-
-
-    def fig_single_type_clique(scene, members=(0, 1, 2), save=None):
-        """(b) C_1 — a clique containing only type-1 disks."""
-        return _finish(_draw(
-            scene, r"$C_1$: a clique containing only type-1 disks",
-            emph=list(members), dim_others=True), save)
-
-
-    def fig_max_clique(scene, save=None):
-        """(c) calligraphic C — the maximum clique (computed, not hand-picked)."""
-        return _finish(_draw(
-            scene,
-            r"$\mathcal{C}$: a maximum clique of $\mathcal{D}_2$"
-            r" (here $|\mathcal{C}|=%d$)" % len(scene.cmax),
-            emph=scene.cmax, dim_others=True), save)
-
-
-    def fig_type_classes(scene, save=None):
-        """(d) calligraphic C_1, C_2 — maximal same-type cliques inside C."""
-        colors = {**{i: TYPE_EDGE[1] for i in scene.c1},
-                  **{i: TYPE_EDGE[2] for i in scene.c2}}
-        return _finish(_draw(
-            scene,
-            r"$\mathcal{C}_1,\ \mathcal{C}_2$: maximal same-type cliques"
-            r" inside $\mathcal{C}$",
-            emph=scene.cmax, dim_others=True, edge_colors=colors), save)
-
-    return (
-        fig_disk_graph,
-        fig_max_clique,
-        fig_single_type_clique,
-        fig_type_classes,
-        make_scene,
-    )
+    scene = sf.make_scene()        # 8-disk D_2 arrangement — the notation figures
+    ascene = sf.make_algo_scene()  # 11-disk walk-through — Psi, slabs, X/Y filter
+    return ascene, scene, sf
 
 
 @app.cell
-def _(
-    fig_disk_graph,
-    fig_max_clique,
-    fig_single_type_clique,
-    fig_type_classes,
-    make_scene,
-):
-    scene = make_scene()
-    disk_graph_fig = fig_disk_graph(scene)                  # 𝒟₂
+def _(scene, sf):
+    disk_graph_fig = sf.fig_disk_graph(scene)                  # 𝒟₂
     disk_graph_fig.savefig("figs/chapter3/notation/disk_graph_fig.png", dpi=300)
 
-    single_type_clique_fig = fig_single_type_clique(scene)  # C₁
+    single_type_clique_fig = sf.fig_single_type_clique(scene)  # C₁
     single_type_clique_fig.savefig("figs/chapter3/notation/single_type_clique_fig.png", dpi=300)
 
-    max_clique_fig = fig_max_clique(scene)                  # 𝒞
+    max_clique_fig = sf.fig_max_clique(scene)                  # 𝒞
     max_clique_fig.savefig("figs/chapter3/notation/max_clique_fig.png", dpi=300)
 
-    type_classes_fig = fig_type_classes(scene)              # 𝒞₁, 𝒞₂
+    type_classes_fig = sf.fig_type_classes(scene)              # 𝒞₁, 𝒞₂
     type_classes_fig.savefig("figs/chapter3/notation/type_classes_fig.png", dpi=300)
     return (
         disk_graph_fig,
@@ -427,6 +277,28 @@ def _(
     type_classes_fig,
 ):
     disk_graph_fig, single_type_clique_fig, max_clique_fig, type_classes_fig 
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ## Algorithm Walk-through (S5–S7)
+    """)
+    return
+
+
+@app.cell
+def _(ascene, sf):
+    guess_fig = sf.fig_guess(ascene, save="figs/chapter3/algorithm/guess.png")
+    slabs_fig = sf.fig_slabs(ascene, save="figs/chapter3/algorithm/slabs.png")
+    filter_fig = sf.fig_filter(ascene, save="figs/chapter3/algorithm/filter.png")
+    invalid_guess_fig = sf.fig_invalid_guess(
+        ascene.s, pair=(0, 4),      # s1 and s5 — they don't intersect, so Psi isn't a clique
+        save="figs/chapter3/algorithm/invalid_guess.png",
+    )
+
+    guess_fig, invalid_guess_fig, slabs_fig, filter_fig
     return
 
 
