@@ -35,7 +35,7 @@ Disk graphs are useful in modelling applied contexts (e.g wireless networks) so 
 
 #### Why it actually became famous
 
-- **Its unresolved complexity status.** For 35+ years, nobody could prove the problem NP-hard _or_ find a polynomial algorithm. That limbo is rare and precious: most natural problems eventually fall on one side. Compare the neighbors listed in the intro — max clique is NP-hard for rays, ellipses, triangles, grounded strings, and _ball_ graphs, yet polynomial for unit disks, rectangles, trapezoids. Disk graphs sit exactly on the unmapped boundary between the two worlds.
+- **Its unresolved complexity status.** For 35+ years, nobody could prove the problem NP-hard _or_ find a polynomial algorithm. That limbo is rare and precious: most natural problems eventually fall on one side. Compare the neighbors listed in the intro — max clique is **NP-hard for rays, ellipses, triangles, grounded strings and _ball_ graphs**, yet **polynomial for unit disks, rectangles, trapezoids**. *Disk graphs* sit exactly on the **unmapped** boundary between the two worlds.
 - **The contrast with the 1990 unit-disk result.** Clark–Colbourn–Johnson solved the unit-radius case cleanly in 1990. Going from "all radii equal" to "even just _two_ radii allowed" broke every known technique — which is what made Cabello pose the k = 2 case explicitly as an open question in 2015. When a tiny generalization resists 35 years of attempts, that's fame.
 - **Community attention.** The intro documents this deliberately: quoted as "an intriguing open question," "a notorious open question in computational geometry," "elusive with no new positive or negative results," a "long-standing open problem" — plus the fact that the best-known approximation (factor 2, via stabbing disks with four points) couldn't even be improved to 1.99.
 
@@ -212,19 +212,27 @@ _each guess uses slabs + anchor-filtering to carve a candidate set that is autom
 * Because $\Psi \subseteq \mathcal{C}$ it follows that $\mathcal{C} \subseteq (\Psi \cup X \cup Y)$
 * From the last to statements it follows that we can compute $\mathcal{C}$ from a maximum bipartite matching in $H\ \blacksquare$.
 ##### Explanations
-**C ⊆ Ψ ∪ X ∪ Y for the correct guess:** follows from the _definitions_ of leftmost/rightmost (centers of C's disks lie in the slabs) and of a clique (C's disks intersect all of Ψ ⊆ C). No geometry needed.
+**C ⊆ Ψ ∪ X ∪ Y for the correct guess:** follows from the _definitions_ of leftmost/rightmost (centers of $\mathcal{C}$'s disks lie in the slabs) and of a clique ($\mathcal{C}$'s disks intersect all of $\Psi \subseteq \mathcal{C}$). No geometry needed.
 **Why Ψ can be excluded from the hard computation.** Every disk in X ∪ Y intersects _all_ of Ψ — that's the filter that defined X and Y in the first place. And Ψ itself is pairwise intersecting (for the correct guess because Ψ ⊆ C; for other guesses because we discard the ones that fail the check). So Ψ's disks are adjacent to each other _and_ to every candidate. Consequence: K is a clique in the graph on X ∪ Y **if and only if** K ∪ Ψ is a clique in the whole candidate set. Ψ imposes no constraint on the choice within X ∪ Y — it's universally compatible, so you can solve the interesting problem on X ∪ Y alone and append Ψ to whatever comes out.
-**The accounting for the correct guess.** C ⊆ Ψ ∪ X ∪ Y, and Ψ ⊆ C. So C ∖ Ψ is a clique living inside X ∪ Y, meaning the max clique of the graph on X ∪ Y has size ≥ |C| − |Ψ|. The algorithm outputs Ψ ∪ (max clique of X ∪ Y), which therefore has size ≥ |C| — and by soundness it can't exceed |C|. Equality.
+**The accounting for the correct guess.** $\mathcal{C} ⊆ \Psi \cup X \cup Y$, and  $\Psi \subseteq \mathcal{C}$. So $\mathcal{C} \setminus \Psi$ is a clique living inside $X \cup Y$, meaning the max clique of the graph on $X \cup Y$ has $size ≥ |\mathcal{C}| − |\Psi|$. The algorithm outputs $\Psi \cup (\text{max clique of} X \cup Y)$ , which therefore has $size \geq |\mathcal{C}|$ — and by soundness it can't exceed $|\mathcal{C}|$. Equality.
 Max clique in the candidate graph on X ∪ Y = max **independent set** in its complement H; H is bipartite (sides = X's complement-vertices and Y's complement-vertices, since X and Y are cliques, all complement-edges run between the camps... plus possibly _within_? No — X a clique means no complement-edges inside X; same for Y — that's precisely bipartiteness of H); and in bipartite graphs, max independent set = n − max matching by König. That three-hop chain — clique → complement independent set → König → matching — is the part audiences ask to see slowly, so rehearse saying it in one breath.
 Xᵢ takes **type-i disks only** with centers in U_{aᵢbᵢ}. The paper's sentence ("every disk that has its center in U_{aᵢbᵢ}…") reads ambiguously, but Lemma 3.1's proof settles it — the i = j case uses "p and q correspond to type-i disks" to get the 2rᵢ bound, which requires Xᵢ's members to have radius rᵢ. A type-j disk whose center happens to fall in type-i's slab isn't lost, of course: if it's in C, it lies in its _own_ type's slab (that's what leftmost/rightmost of type j means), which is all that completeness needs. Good defensive detail to have ready if someone asks "wait, which disks go in which Xᵢ?"
 
-###### The entire mathematical content is Lemma 3.1
-"It now suffices to show that the disks in X (similarly, the disks in Y ) are mutually adjacent."
-Why "suffices" is the right word — it's worth tracing what's genuinely left once X and Y are cliques, because everything else in the argument is either definitional or classical:
 
-- C ⊆ Ψ ∪ X ∪ Y for the correct guess: follows from the _definitions_ of leftmost/rightmost (centers of C's disks lie in the slabs) and of a clique (C's disks intersect all of Ψ ⊆ C). No geometry needed.
-- Complement of the graph on X ∪ Y is bipartite: immediate _given_ X, Y are cliques — no complement-edges inside either camp.
-- Max clique from matching: König, textbook.
+> [!NOTE] The entire mathematical content is Lemma 3.1
+> **"It now *suffices* to show that the disks in X (similarly, the disks in Y ) are mutually adjacent."**
+>
+> Why "*suffices*" is the right word — it's worth tracing what's genuinely left once $X$ and $Y$ are cliques, because everything else in the argument is either definitional or classical:
+>
+>- $\mathcal{C} ⊆ \Psi \cup X \cup Y$ for the correct guess: follows from the _definitions_ of leftmost/rightmost (centers of $\mathcal{C}$'s disks lie in the slabs) and of a clique ($\mathcal{C}$'s disks intersect all of $\Psi \subseteq \mathcal{C}$). No geometry needed.
+>
+>- Complement of the graph on $X \cup Y$ is bipartite: immediate _given_ $X, Y$ are cliques — no complement-edges inside either camp.
+>
+>- Max clique from matching: König, textbook.
+
+
+
+
 
 So the entire original mathematical content of Section 3 is concentrated in one place: Lemma 3.1 (which itself is bookkeeping on top of Lemma 2.1). Everything else is assembly. That's a great framing sentence for your talk, by the way: "the paper's whole new idea fits in one lemma about slabs; the rest is 1990s-vintage machinery" — it makes the "Made Easy" title land.
 
@@ -235,6 +243,37 @@ Two small reading notes on the lemma statement itself, so the quantifiers don't 
 
 ### Algorithm Visualizations
 
+Storyboard order for the deck — one full iteration of the algorithm, rendered on the
+extended 11-disk arrangement.
 
+#### S5 — The guess
+One guess out of $O(n^{2k})$: the leftmost and rightmost anchors $(a_i, b_i)$ of each type, which together form $\Psi$.
 ![](../figs/chapter3/algorithm/guess.png)
-![](../figs/chapter3/algorithm/slabs.png)![](../figs/chapter3/algorithm/filter.png)
+
+##### Aside — a worthless guess
+The two guessed anchors don't intersect, so $\Psi$ is not pairwise intersecting and the iteration is discarded before any real work happens. Harmless: soundness never assumed the guess was right.
+![](../figs/chapter3/algorithm/invalid_guess.png)
+
+#### S6 — The slabs
+$U_{a_ib_i}$ (solid) and $\overline{U}_{a_ib_i}$ (hatched), one pair per radius type.
+![](../figs/chapter3/algorithm/slabs.png)
+
+#### S7 — The filter
+Keep a disk iff its center lies in its own type's slab **and** it intersects every disk of $\Psi$. The survivors are $X$ (upper camp) and $Y$ (lower camp).
+![](../figs/chapter3/algorithm/filter.png)
+
+#### S8 — Lemma 3.1 payoff: $X$ is a clique
+The upper camp $X$, together with $\Psi$, is mutually adjacent. This is the one place the paper does genuinely new mathematical work — everything after it is assembly.
+![](../figs/chapter3/algorithm/x_clique.png)
+
+#### S9 — But $X \cup Y$ is not a clique
+The missing pairs cross the camps. This is precisely why a matching step is needed instead of just returning $X \cup Y$.
+![](../figs/chapter3/algorithm/missing_edges.png)
+
+#### S10 — The complement $H$, and König
+The candidate graph on $X \cup Y$ beside its complement $H$. Since $X$ and $Y$ are each cliques, no complement-edge lives inside a camp, so $H$ is bipartite and $\alpha(H) = |X \cup Y| - \text{max matching}$.
+![](../figs/chapter3/algorithm/complement.png)
+
+#### S11 — Assembly
+$\Psi \cup (\text{selected disks})$ is this iteration's output. The outer maximum over all guesses delivers $|\mathcal{C}|$.
+![](../figs/chapter3/algorithm/assembly.png)

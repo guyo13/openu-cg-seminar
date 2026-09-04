@@ -178,5 +178,24 @@ def _(ascene, sf):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ## Assembly (S8–S11)
+    """)
+    return
+
+
+@app.cell
+def _(ascene, sf):
+    x_clique_fig = sf.fig_x_clique(ascene, save="figs/chapter3/algorithm/x_clique.png")
+    missing_edges_fig = sf.fig_missing_edges(ascene, save="figs/chapter3/algorithm/missing_edges.png")
+    complement_fig = sf.fig_complement(ascene, save="figs/chapter3/algorithm/complement.png")
+    assembly_fig = sf.fig_assembly(ascene, save="figs/chapter3/algorithm/assembly.png")
+
+    x_clique_fig, missing_edges_fig, complement_fig, assembly_fig
+    return
+
+
 if __name__ == "__main__":
     app.run()
