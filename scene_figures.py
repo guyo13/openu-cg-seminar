@@ -180,14 +180,20 @@ def _base_axes(s, figsize=(8.2, 6.0)):
     ax.axis("off")
     return fig, ax
 
-def _disk(ax, s, i, edge, lw=1.2, alpha=.85, label_alpha=1.0, fill=True):
+def _disk(ax, s, i, edge, lw=1.2, alpha=.85, label_alpha=1.0, fill=True,
+          accent=False, ls="-"):
+    """accent=True: the center point and the name label take the edge color,
+    tying bold disks to their centers at a glance."""
     ax.add_patch(Circle(s.pos[i], s.rad[i],
                         facecolor=TYPE_FACE[s.typ[i]] if fill else "none",
-                        edgecolor=edge, alpha=alpha, lw=lw, zorder=2))
-    ax.plot(*s.pos[i], "o", color="k", ms=3, alpha=label_alpha, zorder=4)
+                        edgecolor=edge, alpha=alpha, lw=lw, ls=ls, zorder=2))
+    c = edge if accent else "k"
+    ax.plot(*s.pos[i], "o", color=c, ms=4 if accent else 3,
+            alpha=label_alpha, zorder=4)
     ax.annotate(s.name[i], s.pos[i], textcoords="offset points",
-                xytext=LABEL_OFFSETS.get(s.name[i], (5, 5)),
-                fontsize=10, alpha=label_alpha, zorder=5)
+                xytext=LABEL_OFFSETS.get(s.name[i], (5, 5)), fontsize=10,
+                color=c, alpha=label_alpha, zorder=5,
+                fontweight="bold" if accent else "normal")
 
 def _gray_edges(ax, s, dim=False):
     for i, j in itertools.combinations(range(s.n), 2):
@@ -214,7 +220,8 @@ def _draw(scene, title, emph=None, dim_others=False, edge_colors=None):
         ec = (edge_colors or {}).get(
             i, "#333" if i in emph else TYPE_EDGE[s.typ[i]])
         _disk(ax, s, i, ec, lw=2.6 if i in emph else 1.2,
-              alpha=.85 if strong else .18, label_alpha=1 if strong else .3)
+              alpha=.85 if strong else .18, label_alpha=1 if strong else .3,
+              accent=i in emph)
     for i, j in itertools.combinations(range(s.n), 2):
         if s.adj[i][j]:
             both = i in emph and j in emph
@@ -263,6 +270,30 @@ def fig_type_classes(scene, save=None):
 # Chapter 3 — algorithm walk-through (storyboard S5-S7)
 # --------------------------------------------------------------------------
 
+def _shade_slabs(ax, a, alpha=.3):
+    """Per-type slab shading: solid above the anchor segment, hatched below."""
+    s = a.s
+    (_, _), (ylo, yhi) = _limits(s)[0], _limits(s)[1]
+    for t, (ai, bi) in a.guess.items():
+        xa, xb = sorted((s.pos[ai][0], s.pos[bi][0]))
+        xs = np.linspace(xa, xb, 60)
+        ys = np.array([a.seg_y(t, x) for x in xs])
+        ax.fill_between(xs, ys, yhi, color=TYPE_FACE[t], alpha=alpha, zorder=0)
+        ax.fill_between(xs, ylo, ys, color=TYPE_FACE[t], alpha=alpha, zorder=0,
+                        hatch="//", edgecolor="white", lw=0)
+        for xw in (xa, xb):
+            ax.plot([xw, xw], [ylo, yhi], color=TYPE_EDGE[t], ls="--",
+                    lw=1.2, zorder=1)
+
+
+def _slab_legend_patches():
+    from matplotlib.patches import Patch
+    return [Patch(facecolor="#d0d4da", alpha=.7,
+                  label=r"upper slab $U_{a_ib_i}$"),
+            Patch(facecolor="#d0d4da", alpha=.7, hatch="//",
+                  edgecolor="white", label=r"lower slab $\overline{U}_{a_ib_i}$")]
+
+
 def _draw_anchor_segments(ax, a):
     """Segments a_i b_i plus their labels, per guessed type."""
     s = a.s
@@ -283,7 +314,7 @@ def fig_guess(ascene, save=None):
     fig, ax = _base_axes(s)
     for i in range(s.n):
         if i in a.psi:
-            _disk(ax, s, i, PSI_EDGE, lw=3.0)
+            _disk(ax, s, i, PSI_EDGE, lw=3.0, accent=True)
         else:
             _disk(ax, s, i, TYPE_EDGE[s.typ[i]], alpha=.35, label_alpha=.6)
     _draw_anchor_segments(ax, a)
@@ -306,7 +337,7 @@ def fig_invalid_guess(scene, pair, save=None):
     fig, ax = _base_axes(s)
     for m in range(s.n):
         if m in (i, j):
-            _disk(ax, s, m, "#e03131", lw=3.0)
+            _disk(ax, s, m, "#e03131", lw=3.0, accent=True)
         else:
             _disk(ax, s, m, TYPE_EDGE[s.typ[m]], alpha=.3, label_alpha=.5)
     mid = (s.pos[i] + s.pos[j]) / 2
@@ -325,24 +356,17 @@ def fig_slabs(ascene, save=None):
     """S6 — the slabs of each guessed type, shaded above/below the segment."""
     a, s = ascene, ascene.s
     fig, ax = _base_axes(s)
-    (_, _), (ylo, yhi) = _limits(s)[0], _limits(s)[1]
-    for t, (ai, bi) in a.guess.items():
-        xa, xb = sorted((s.pos[ai][0], s.pos[bi][0]))
-        xs = np.linspace(xa, xb, 60)
-        ys = np.array([a.seg_y(t, x) for x in xs])
-        ax.fill_between(xs, ys, yhi, color=TYPE_FACE[t], alpha=.3, zorder=0)
-        ax.fill_between(xs, ylo, ys, color=TYPE_FACE[t], alpha=.3, zorder=0,
-                        hatch="//", edgecolor="white", lw=0)
-        for xw in (xa, xb):
-            ax.plot([xw, xw], [ylo, yhi], color=TYPE_EDGE[t], ls="--",
-                    lw=1.2, zorder=1)
+    _shade_slabs(ax, a)
     for i in range(s.n):
         if i in a.psi:
-            _disk(ax, s, i, PSI_EDGE, lw=3.0, alpha=.9, fill=False)
+            _disk(ax, s, i, PSI_EDGE, lw=3.0, alpha=.9, fill=False,
+                  accent=True)
         else:
-            _disk(ax, s, i, TYPE_EDGE[s.typ[i]], lw=1.4, alpha=.55,
-                  label_alpha=.6, fill=False)
+            _disk(ax, s, i, TYPE_EDGE[s.typ[i]], lw=1.2, alpha=.25,
+                  label_alpha=.4, fill=False)
     _draw_anchor_segments(ax, a)
+    ax.legend(handles=_psi_legend(_slab_legend_patches()),
+              loc="lower left", fontsize=9)
     ax.set_title(
         r"Slabs of the guess: $U_{a_ib_i}$ (solid) and"
         r" $\overline{U}_{a_ib_i}$ (hatched), per type", fontsize=11)
@@ -355,25 +379,27 @@ def fig_filter(ascene, save=None):
     disk is discarded with its reason."""
     a, s = ascene, ascene.s
     fig, ax = _base_axes(s)
+    _shade_slabs(ax, a, alpha=.18)
     for i in range(s.n):
         if i in a.psi:
-            _disk(ax, s, i, PSI_EDGE, lw=3.0)
+            _disk(ax, s, i, PSI_EDGE, lw=3.0, accent=True)
         elif i in a.X:
-            _disk(ax, s, i, X_EDGE, lw=3.0)
+            _disk(ax, s, i, X_EDGE, lw=3.0, accent=True)
         elif i in a.Y:
-            _disk(ax, s, i, Y_EDGE, lw=3.0)
+            _disk(ax, s, i, Y_EDGE, lw=3.0, accent=True)
         else:
-            _disk(ax, s, i, "#adb5bd", lw=1.0, alpha=.18, label_alpha=.35)
+            _disk(ax, s, i, "#adb5bd", lw=1.0, alpha=.10, label_alpha=.28)
             tag = "✗ slab" if a.reasons.get(i) == "slab" else "✗ misses $\\Psi$"
             ax.annotate(tag, s.pos[i], textcoords="offset points",
                         xytext=(0, -14), fontsize=8, ha="center",
-                        color="#868e96", zorder=6)
+                        color="#adb5bd", zorder=6)
     _draw_anchor_segments(ax, a)
     handles = _psi_legend((
         Line2D([], [], color=X_EDGE, lw=2.6,
                label=rf"$X$ = upper survivors  ({', '.join(s.name[i] for i in a.X)})"),
         Line2D([], [], color=Y_EDGE, lw=2.6,
                label=rf"$Y$ = lower survivors  ({', '.join(s.name[i] for i in a.Y)})"),
+        *_slab_legend_patches(),
     ))
     ax.legend(handles=handles, loc="lower left", fontsize=9)
     ax.set_title(
@@ -394,21 +420,34 @@ def fig_x_clique(ascene, save=None):
     camp = a.X + a.psi
     for i in range(s.n):
         if i in a.X:
-            _disk(ax, s, i, X_EDGE, lw=3.0)
+            _disk(ax, s, i, X_EDGE, lw=3.0, accent=True)
         elif i in a.psi:
             _disk(ax, s, i, PSI_EDGE, lw=2.2, alpha=.55, fill=False)
+        elif i in a.Y:
+            # unbolded dashed preview of the lower camp, easing S7 -> S9
+            _disk(ax, s, i, Y_EDGE, lw=1.6, alpha=.45, fill=False, ls="--",
+                  label_alpha=.5)
         else:
             _disk(ax, s, i, "#adb5bd", lw=1.0, alpha=.12, label_alpha=.3)
     for i, j in itertools.combinations(camp, 2):
         both_x = i in a.X and j in a.X
         ax.plot(*np.c_[s.pos[i], s.pos[j]],
-                color="#333" if both_x else "#2f9e44",
-                lw=2.6 if both_x else 1.0,
-                alpha=.95 if both_x else .45, zorder=3)
+                color="#333" if both_x else "#aaa",
+                lw=2.8 if both_x else 1.1,
+                alpha=.95 if both_x else .6, zorder=3)
+    handles = _psi_legend((
+        Line2D([], [], color=X_EDGE, lw=2.6, label=r"$X$ = upper survivors"),
+        Line2D([], [], color="#333", lw=2.8,
+               label=r"adjacency within $X$ (Lemma 3.1)"),
+        Line2D([], [], color="#aaa", lw=1.1,
+               label=r"adjacency to $\Psi$ (by construction)"),
+        Line2D([], [], color=Y_EDGE, lw=1.6, ls="--",
+               label=r"$Y$ (up next)"),
+    ))
+    ax.legend(handles=handles, loc="lower left", fontsize=9)
     ax.set_title(
-        "Lemma 3.1: the disks of $X$ are mutually adjacent — guaranteed,\n"
-        "for every guess (thin green: adjacency to $\\Psi$, by construction)",
-        fontsize=11)
+        "Lemma 3.1: the disks of $X$ are mutually adjacent —\n"
+        "guaranteed for every guess", fontsize=11)
     fig.tight_layout()
     return _finish(fig, save)
 
@@ -419,9 +458,9 @@ def fig_missing_edges(ascene, save=None):
     fig, ax = _base_axes(s)
     for i in range(s.n):
         if i in a.X:
-            _disk(ax, s, i, X_EDGE, lw=3.0)
+            _disk(ax, s, i, X_EDGE, lw=3.0, accent=True)
         elif i in a.Y:
-            _disk(ax, s, i, Y_EDGE, lw=3.0)
+            _disk(ax, s, i, Y_EDGE, lw=3.0, accent=True)
         elif i in a.psi:
             _disk(ax, s, i, PSI_EDGE, lw=2.2, alpha=.5, fill=False)
         else:
@@ -500,7 +539,7 @@ def fig_assembly(ascene, save=None):
         if i in a.final:
             edge = PSI_EDGE if i in a.psi else (
                 X_EDGE if i in a.X else Y_EDGE)
-            _disk(ax, s, i, edge, lw=3.0)
+            _disk(ax, s, i, edge, lw=3.0, accent=True)
         else:
             _disk(ax, s, i, "#adb5bd", lw=1.0, alpha=.12, label_alpha=.3)
     for i, j in itertools.combinations(a.final, 2):
