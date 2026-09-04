@@ -20,10 +20,16 @@ from matplotlib.lines import Line2D
 
 TYPE_FACE = {1: "#a5d8ff", 2: "#ffd8a8"}      # fill by radius type
 TYPE_EDGE = {1: "#1971c2", 2: "#e8590c"}
-PSI_EDGE  = "#2f9e44"                         # guessed anchors (Psi)
-X_EDGE    = "#7048e8"                         # upper-slab survivors
-Y_EDGE    = "#0ca678"                         # lower-slab survivors
+PSI_EDGE  = "#2f9e44"                         # guessed anchors (Psi) - green
+X_EDGE    = "#7048e8"                         # upper-slab survivors  - violet
+Y_EDGE    = "#d6336c"                         # lower-slab survivors  - magenta
 EPS       = 1e-12
+
+# per-disk label nudges (points) to keep the crowded core legible
+LABEL_OFFSETS = {
+    "s1": (-24, 6), "s2": (7, 6), "s3": (-8, 10),
+    "s6": (-26, -3), "b2": (6, -14), "b4": (6, 8),
+}
 
 R1, R2 = 0.8, 1.4
 
@@ -142,9 +148,18 @@ def make_algo_scene(scene=None, guess=None):
                key=len)
     final = sorted(set(psi) | set(best))
 
+    # maximum matching in the complement H (brute force; H is tiny) —
+    # Koenig: |max matching| = |X ∪ Y| − |max independent set of H|
+    matching = max(
+        (M for m in range(len(comp_edges), -1, -1)
+         for M in itertools.combinations(comp_edges, m)
+         if len({v for e in M for v in e}) == 2 * len(M)),
+        key=len)
+
     return SimpleNamespace(
         s=s, guess=guess, psi=psi, psi_valid=psi_valid,
         X=X, Y=Y, reasons=reasons, comp_edges=comp_edges,
+        matching=list(matching),
         chosen=list(best), final=final, seg_y=seg_y,
     )
 
@@ -158,7 +173,7 @@ def _limits(s, pad=0.4):
     hi = (s.pos + s.rad[:, None]).max(axis=0) + pad
     return (lo[0], hi[0]), (lo[1], hi[1])
 
-def _base_axes(s, figsize=(6.8, 5.4)):
+def _base_axes(s, figsize=(8.2, 6.0)):
     fig, ax = plt.subplots(figsize=figsize)
     xlim, ylim = _limits(s)
     ax.set_aspect("equal"); ax.set_xlim(*xlim); ax.set_ylim(*ylim)
@@ -171,7 +186,8 @@ def _disk(ax, s, i, edge, lw=1.2, alpha=.85, label_alpha=1.0, fill=True):
                         edgecolor=edge, alpha=alpha, lw=lw, zorder=2))
     ax.plot(*s.pos[i], "o", color="k", ms=3, alpha=label_alpha, zorder=4)
     ax.annotate(s.name[i], s.pos[i], textcoords="offset points",
-                xytext=(5, 5), fontsize=9, alpha=label_alpha, zorder=5)
+                xytext=LABEL_OFFSETS.get(s.name[i], (5, 5)),
+                fontsize=10, alpha=label_alpha, zorder=5)
 
 def _gray_edges(ax, s, dim=False):
     for i, j in itertools.combinations(range(s.n), 2):
@@ -265,7 +281,6 @@ def fig_guess(ascene, save=None):
     """S5 — one iteration's guess: anchors of each type highlighted."""
     a, s = ascene, ascene.s
     fig, ax = _base_axes(s)
-    _gray_edges(ax, s, dim=True)
     for i in range(s.n):
         if i in a.psi:
             _disk(ax, s, i, PSI_EDGE, lw=3.0)
@@ -289,7 +304,6 @@ def fig_invalid_guess(scene, pair, save=None):
     s = scene
     i, j = pair
     fig, ax = _base_axes(s)
-    _gray_edges(ax, s, dim=True)
     for m in range(s.n):
         if m in (i, j):
             _disk(ax, s, m, "#e03131", lw=3.0)
@@ -322,7 +336,6 @@ def fig_slabs(ascene, save=None):
         for xw in (xa, xb):
             ax.plot([xw, xw], [ylo, yhi], color=TYPE_EDGE[t], ls="--",
                     lw=1.2, zorder=1)
-    _gray_edges(ax, s, dim=True)
     for i in range(s.n):
         if i in a.psi:
             _disk(ax, s, i, PSI_EDGE, lw=3.0, alpha=.9, fill=False)
@@ -342,7 +355,6 @@ def fig_filter(ascene, save=None):
     disk is discarded with its reason."""
     a, s = ascene, ascene.s
     fig, ax = _base_axes(s)
-    _gray_edges(ax, s, dim=True)
     for i in range(s.n):
         if i in a.psi:
             _disk(ax, s, i, PSI_EDGE, lw=3.0)
@@ -367,5 +379,137 @@ def fig_filter(ascene, save=None):
     ax.set_title(
         "The filter: keep a disk iff its center is in its type's slab\n"
         "AND it intersects every disk of $\\Psi$", fontsize=11)
+    fig.tight_layout()
+    return _finish(fig, save)
+
+
+# --------------------------------------------------------------------------
+# Chapter 3 — algorithm walk-through (storyboard S8-S11)
+# --------------------------------------------------------------------------
+
+def fig_x_clique(ascene, save=None):
+    """S8 — Lemma 3.1 payoff: the upper camp X (with Psi) is one clique."""
+    a, s = ascene, ascene.s
+    fig, ax = _base_axes(s)
+    camp = a.X + a.psi
+    for i in range(s.n):
+        if i in a.X:
+            _disk(ax, s, i, X_EDGE, lw=3.0)
+        elif i in a.psi:
+            _disk(ax, s, i, PSI_EDGE, lw=2.2, alpha=.55, fill=False)
+        else:
+            _disk(ax, s, i, "#adb5bd", lw=1.0, alpha=.12, label_alpha=.3)
+    for i, j in itertools.combinations(camp, 2):
+        both_x = i in a.X and j in a.X
+        ax.plot(*np.c_[s.pos[i], s.pos[j]],
+                color="#333" if both_x else "#2f9e44",
+                lw=2.6 if both_x else 1.0,
+                alpha=.95 if both_x else .45, zorder=3)
+    ax.set_title(
+        "Lemma 3.1: the disks of $X$ are mutually adjacent — guaranteed,\n"
+        "for every guess (thin green: adjacency to $\\Psi$, by construction)",
+        fontsize=11)
+    fig.tight_layout()
+    return _finish(fig, save)
+
+
+def fig_missing_edges(ascene, save=None):
+    """S9 — X ∪ Y is NOT a clique: the missing pairs cross the camps."""
+    a, s = ascene, ascene.s
+    fig, ax = _base_axes(s)
+    for i in range(s.n):
+        if i in a.X:
+            _disk(ax, s, i, X_EDGE, lw=3.0)
+        elif i in a.Y:
+            _disk(ax, s, i, Y_EDGE, lw=3.0)
+        elif i in a.psi:
+            _disk(ax, s, i, PSI_EDGE, lw=2.2, alpha=.5, fill=False)
+        else:
+            _disk(ax, s, i, "#adb5bd", lw=1.0, alpha=.12, label_alpha=.3)
+    cand = a.X + a.Y
+    for i, j in itertools.combinations(cand, 2):
+        if s.adj[i][j]:
+            ax.plot(*np.c_[s.pos[i], s.pos[j]], color="#333", lw=2.2,
+                    alpha=.9, zorder=3)
+    for i, j in a.comp_edges:
+        mid = (s.pos[i] + s.pos[j]) / 2
+        ax.plot(*np.c_[s.pos[i], s.pos[j]], color="#e03131", lw=2.2,
+                ls="--", zorder=3)
+        ax.annotate("✗", mid, fontsize=20, color="#e03131",
+                    ha="center", va="center", zorder=6)
+    ax.set_title(
+        "But $X \\cup Y$ is not a clique: pairs across the camps may miss\n"
+        "(red dashed) — some disks of $X$ and $Y$ cannot coexist",
+        fontsize=11)
+    fig.tight_layout()
+    return _finish(fig, save)
+
+
+def _graph_panel(ax, ascene, edges, bold_edges=(), ring=(), title=""):
+    """Abstract node-link panel: X stacked on the left, Y on the right."""
+    a, s = ascene, ascene.s
+    ys_x = np.linspace(1, -1, max(len(a.X), 1))
+    ys_y = np.linspace(1, -1, max(len(a.Y), 1))
+    P = {i: (-1.0, ys_x[k]) for k, i in enumerate(a.X)}
+    P.update({i: (1.0, ys_y[k]) for k, i in enumerate(a.Y)})
+    for i, j in edges:
+        bold = (i, j) in bold_edges or (j, i) in bold_edges
+        ax.plot(*np.c_[P[i], P[j]], color="#e03131" if bold else "#555",
+                lw=3.2 if bold else 1.6, zorder=2)
+    for i, xy in P.items():
+        col = X_EDGE if i in a.X else Y_EDGE
+        ax.plot(*xy, "o", ms=16, color=col, zorder=3)
+        if i in ring:
+            ax.plot(*xy, "o", ms=26, mfc="none", mec=PSI_EDGE, mew=2.5,
+                    zorder=4)
+        ax.annotate(s.name[i], xy, textcoords="offset points",
+                    xytext=(0, 16), ha="center", fontsize=11, zorder=5)
+    ax.set_title(title, fontsize=11)
+    ax.set_xlim(-1.9, 1.9); ax.set_ylim(-1.7, 1.7)
+    ax.set_aspect("equal"); ax.axis("off")
+
+
+def fig_complement(ascene, save=None):
+    """S10 — the candidate graph vs its complement H; matching + selection."""
+    a, s = ascene, ascene.s
+    cand = a.X + a.Y
+    adj_edges = [(i, j) for i, j in itertools.combinations(cand, 2)
+                 if s.adj[i][j]]
+    fig, (axl, axr) = plt.subplots(1, 2, figsize=(10.5, 5))
+    _graph_panel(axl, a, adj_edges,
+                 title="candidate graph on $X \\cup Y$\n"
+                       "(max clique = what we want)")
+    _graph_panel(axr, a, a.comp_edges, bold_edges=a.matching, ring=a.chosen,
+                 title="complement $H$ — bipartite!\n"
+                       "(bold: max matching; ringed: max independent set)")
+    kx = len(cand) - len(a.matching)
+    fig.suptitle(
+        rf"Kőnig: $\alpha(H) = |X \cup Y| - $ matching $= {len(cand)} - "
+        rf"{len(a.matching)} = {kx}$  →  chosen: "
+        + "{" + ", ".join(s.name[i] for i in a.chosen) + "}",
+        fontsize=12)
+    fig.tight_layout()
+    return _finish(fig, save)
+
+
+def fig_assembly(ascene, save=None):
+    """S11 — assembly: Psi ∪ (selected disks) is the iteration's output."""
+    a, s = ascene, ascene.s
+    fig, ax = _base_axes(s)
+    for i in range(s.n):
+        if i in a.final:
+            edge = PSI_EDGE if i in a.psi else (
+                X_EDGE if i in a.X else Y_EDGE)
+            _disk(ax, s, i, edge, lw=3.0)
+        else:
+            _disk(ax, s, i, "#adb5bd", lw=1.0, alpha=.12, label_alpha=.3)
+    for i, j in itertools.combinations(a.final, 2):
+        ax.plot(*np.c_[s.pos[i], s.pos[j]], color="#333", lw=1.8,
+                alpha=.85, zorder=3)
+    ax.set_title(
+        rf"Output of this iteration: $\Psi \cup$ selected disks — a clique of"
+        rf" size {len(a.final)}"
+        "\n(the algorithm returns the max over all $O(n^{2k})$ guesses)",
+        fontsize=11)
     fig.tight_layout()
     return _finish(fig, save)
