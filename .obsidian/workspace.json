@@ -64,21 +64,19 @@
             }
           },
           {
-            "id": "db3afae30ed43b6e",
+            "id": "f20739518f8f7bbb",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "pdf",
               "state": {
-                "file": "docs/Clique paper study checklist.md",
-                "mode": "source",
-                "source": false
+                "file": "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf"
               },
-              "icon": "lucide-file",
-              "title": "Clique paper study checklist"
+              "icon": "lucide-file-text",
+              "title": "The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2"
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -245,11 +243,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "a04447c39e6fee3d",
+  "active": "9965c20fb1103dce",
   "lastOpenFiles": [
-    "docs/Clique paper study checklist.md",
-    "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
     "docs/Notes on the Maximum Clique paper.md",
+    "docs/Clique paper study checklist.md",
+    "docs/qa-armor-notes.md",
+    "docs/Unconfirmed 609121.crdownload",
+    "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
     "__pycache__/scene_figures.cpython-311.pyc.140161945535792",
     "figures-polish-round-3-rebased.bundle",
     "Unconfirmed 946070.crdownload",
@@ -260,7 +260,6 @@
     "figs/chapter4",
     "epilogue_figures.py",
     "figures-epilogue-lens.bundle",
-    "Unconfirmed 104083.crdownload",
     "figs/chapter3/algorithm/guess.png",
     "figs/chapter3/algorithm/x_clique.png",
     "figs/chapter3/algorithm/missing_edges.png",
