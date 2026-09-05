@@ -125,9 +125,16 @@ function FindMaxCliqueUDG(Vertices, edge_threshold):
 3. The exhaustive loop - we consider all pairs therefore we will stumble upon $u^*, v^*$.
 4. The optimal len is co-bipartite - therefore - the bipartite matching algorithm on the complement graph is mathematically guaranteed to find the _exact_ Maximum Independent Set (which is equivalent to the maximum clique in the UDG).
 
+##### The CCJ recipe visualized
+Guess the farthest pair $(v, w)$; every center adjacent to both must lie in the lens of radius $|vw|$. The line $\ell_{vw}$ splits that lens into two halves, and each half is a clique — so only the *cross-half* pairs are ever in doubt, and those are exactly what the bipartite matching resolves.
+![](../figs/chapter4/ccj_lens.png)
+
 ##### The deception
 
 The deceptive assumption was that CCJ's diameter-pair-plus-lens recipe generalizes to mixed radii — but the lens split no longer forces the two mutually-adjacent camps needed for a co-bipartite complement, and no amount of additional guessing visibly repairs it. The paper escapes by changing the guess itself: extreme-left and extreme-right disks per radius type, with slabs replacing lenses.
+
+Same recipe, two radii: guessing the farthest *small* pair $(p, q)$ confines small centers to the small lens $L_s$ and big centers to the larger lens $L_b$. But $u_1$ and $u_2$ can sit on the **same** side of $\ell_{pq}$ while $|u_1u_2| > 2r_b$ — same camp, yet not adjacent. The split stops forcing cliques, so the complement stops being bipartite and König no longer applies.
+![](../figs/chapter6/lens_deception.png)
 
 ## Phase 3 — Lemma 2.1 (the foundation)
 
@@ -204,19 +211,20 @@ _each guess uses slabs + anchor-filtering to carve a candidate set that is autom
 * For each disk type $i$ we guess two disk centers $a_i,b_i$ from $\mathcal{C}_i$ where $a_i$ is the leftmost and $b_i$ is rightmost.
 	* We denote the set of all these disk centers $\Psi$
 	* $\Psi$ has $2k$ elements in the worst case
-* For all $i \leq k$ define $X_i$ as the set of disks whose center is in $U_{a_ib_i}$ and intersect all the disks in $\Psi$.
-* Similarily define $Y_i$ as the set of disks whose center is in $\overline{U}_{a_ib_i}$ and intersect all the disks in $\Psi$.
-* The unions $X = \cup_{i=1}^k X_i$ and $Y = \cup_{i=1}^k Y_i$ are cliques in $\mathcal{D}_k$.
-* Therefore the subgraph of $\mathcal{D}_k$ composed of $X \cup Y$ is co-bipartite (any 2 cliques in a graph form a co-bipartite graph)
+>* For all $i \leq k$ define $X_i$ as the set of disks whose **center is in $U_{a_ib_i}$** ==***AND***== **intersect all the disks in $\Psi$**..
+>* Similarily define $Y_i$ as the set of disks whose **center is in $\overline{U}_{a_ib_i}$** ==***AND***== **intersect all the disks in $\Psi$**.
+>* The unions $X = \cup_{i=1}^k X_i$ and $Y = \cup_{i=1}^k Y_i$ are cliques in $\mathcal{D}_k$. - **This is the key! Lemma 3.1 gives us this**.
+* Therefore the subgraph of $\mathcal{D}_k$ composed of $X \cup Y$ is co-bipartite (**any 2 cliques in a graph form a co-bipartite graph** - a true statement that I wont prove)
 * Therefore its complement, denoted $H$ is Bipartite.
 * Because $\Psi \subseteq \mathcal{C}$ it follows that $\mathcal{C} \subseteq (\Psi \cup X \cup Y)$
 * From the last to statements it follows that we can compute $\mathcal{C}$ from a maximum bipartite matching in $H\ \blacksquare$.
-##### Explanations
-**C ⊆ Ψ ∪ X ∪ Y for the correct guess:** follows from the _definitions_ of leftmost/rightmost (centers of $\mathcal{C}$'s disks lie in the slabs) and of a clique ($\mathcal{C}$'s disks intersect all of $\Psi \subseteq \mathcal{C}$). No geometry needed.
-**Why Ψ can be excluded from the hard computation.** Every disk in X ∪ Y intersects _all_ of Ψ — that's the filter that defined X and Y in the first place. And Ψ itself is pairwise intersecting (for the correct guess because Ψ ⊆ C; for other guesses because we discard the ones that fail the check). So Ψ's disks are adjacent to each other _and_ to every candidate. Consequence: K is a clique in the graph on X ∪ Y **if and only if** K ∪ Ψ is a clique in the whole candidate set. Ψ imposes no constraint on the choice within X ∪ Y — it's universally compatible, so you can solve the interesting problem on X ∪ Y alone and append Ψ to whatever comes out.
-**The accounting for the correct guess.** $\mathcal{C} ⊆ \Psi \cup X \cup Y$, and  $\Psi \subseteq \mathcal{C}$. So $\mathcal{C} \setminus \Psi$ is a clique living inside $X \cup Y$, meaning the max clique of the graph on $X \cup Y$ has $size ≥ |\mathcal{C}| − |\Psi|$. The algorithm outputs $\Psi \cup (\text{max clique of} X \cup Y)$ , which therefore has $size \geq |\mathcal{C}|$ — and by soundness it can't exceed $|\mathcal{C}|$. Equality.
-Max clique in the candidate graph on X ∪ Y = max **independent set** in its complement H; H is bipartite (sides = X's complement-vertices and Y's complement-vertices, since X and Y are cliques, all complement-edges run between the camps... plus possibly _within_? No — X a clique means no complement-edges inside X; same for Y — that's precisely bipartiteness of H); and in bipartite graphs, max independent set = n − max matching by König. That three-hop chain — clique → complement independent set → König → matching — is the part audiences ask to see slowly, so rehearse saying it in one breath.
-Xᵢ takes **type-i disks only** with centers in U_{aᵢbᵢ}. The paper's sentence ("every disk that has its center in U_{aᵢbᵢ}…") reads ambiguously, but Lemma 3.1's proof settles it — the i = j case uses "p and q correspond to type-i disks" to get the 2rᵢ bound, which requires Xᵢ's members to have radius rᵢ. A type-j disk whose center happens to fall in type-i's slab isn't lost, of course: if it's in C, it lies in its _own_ type's slab (that's what leftmost/rightmost of type j means), which is all that completeness needs. Good defensive detail to have ready if someone asks "wait, which disks go in which Xᵢ?"
+##### Explanations and clarifications
+* **$\mathcal{C} ⊆ \Psi \cup X \cup Y$ for the correct guess:** follows from the _definitions_ of leftmost/rightmost (centers of $\mathcal{C}$'s disks lie in the slabs) and of a clique ($\mathcal{C}$'s disks intersect all of $\Psi \subseteq \mathcal{C}$). No geometry needed.
+* **Why Ψ can be excluded from the hard computation.** Every disk in X ∪ Y intersects _all_ of Ψ — that's the filter that defined X and Y in the first place. And Ψ itself is pairwise intersecting (for the correct guess because Ψ ⊆ C; for other guesses because we discard the ones that fail the check). So Ψ's disks are adjacent to each other _and_ to every candidate. Consequence: K is a clique in the graph on X ∪ Y **if and only if** K ∪ Ψ is a clique in the whole candidate set. Ψ imposes no constraint on the choice within X ∪ Y — it's universally compatible, so you can solve the interesting problem on X ∪ Y alone and append Ψ to whatever comes out.
+* **The accounting for the correct guess.** $\mathcal{C} ⊆ \Psi \cup X \cup Y$, and  $\Psi \subseteq \mathcal{C}$. So $\mathcal{C} \setminus \Psi$ is a clique living inside $X \cup Y$, meaning the max clique of the graph on $X \cup Y$ has $size ≥ |\mathcal{C}| − |\Psi|$. The algorithm outputs $\Psi \cup (\text{max clique of} X \cup Y)$ , which therefore has $size \geq |\mathcal{C}|$ — and by soundness it can't exceed $|\mathcal{C}|$. Equality.
+* Max clique in the candidate graph on X ∪ Y = max **independent set** in its complement H; H is bipartite (sides = X's complement-vertices and Y's complement-vertices, since X and Y are cliques, all complement-edges run between the camps... plus possibly _within_? No — X a clique means no complement-edges inside X; same for Y — that's precisely bipartiteness of H); and in bipartite graphs, max independent set = n − max matching by König. That three-hop chain — clique → complement independent set → König → matching — is the part audiences ask to see slowly, so rehearse saying it in one breath.
+* Xᵢ takes **type-i disks only** with centers in U_{aᵢbᵢ}. The paper's sentence ("every disk that has its center in U_{aᵢbᵢ}…") reads ambiguously, but Lemma 3.1's proof settles it — the i = j case uses "p and q correspond to type-i disks" to get the 2rᵢ bound, which requires Xᵢ's members to have radius rᵢ. A type-j disk whose center happens to fall in type-i's slab isn't lost, of course: if it's in C, it lies in its _own_ type's slab (that's what leftmost/rightmost of type j means), which is all that completeness needs. Good defensive detail to have ready if someone asks "wait, which disks go in which Xᵢ?"
+* **"leftmost and rightmost" is a sentence from the analysis, not from the algorithm.** The algorithm never identifies extremes of anything — it just enumerates all O(n²) pairs per type. The analysis then says: among these iterations there exists one where the pair _happens to equal_ the extremes of the true 𝒞ᵢ, and that iteration's output is certified ≥ |𝒞|. The enumeration is how you purchase unknowable information with running time — n^{2k} is literally the price tag on "I cannot know 𝒞's anchors in advance." (Same purchase CCJ made in 1990: the farthest pair of the clique is equally unknowable, hence their O(n²) outer loop over all pairs.)
 
 
 > [!NOTE] The entire mathematical content is Lemma 3.1

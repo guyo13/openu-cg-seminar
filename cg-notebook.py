@@ -197,5 +197,24 @@ def _(ascene, sf):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md(r"""
+    # Epilogue — the CCJ lens and the two-radii deception
+    """)
+    return
+
+
+@app.cell
+def _():
+    import epilogue_figures as ef
+
+    ccj_lens_fig = ef.fig_ccj_lens(save="figs/chapter4/ccj_lens.png")
+    lens_deception_fig = ef.fig_lens_deception(save="figs/chapter6/lens_deception.png")
+
+    ccj_lens_fig, lens_deception_fig
+    return
+
+
 if __name__ == "__main__":
     app.run()
