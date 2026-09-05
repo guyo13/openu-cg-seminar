@@ -200,6 +200,10 @@ Distinguish 2 scenarios:
 
 Guessing = exhaustive enumeration over all candidates. Wrong guesses are harmless because the construction guarantees every candidate output is a true clique (soundness, via Lemma 3.1 — which never assumes the guess is right), while the one correct guess guarantees the maximum is reached (completeness). The only validation needed is that the guessed set $\Psi$ itself is pairwise intersecting.
 
+##### Why not just sort and take the extremes?
+The tempting shortcut is to sort the type-$i$ disks by $x$ and take the two extremes — no enumeration needed. It fails, and it fails instructively: the sorted extremes of *all* type-1 disks ($s_5$ leftmost, $s_4$ rightmost) are not even members of $\mathcal{C}$. The pair the analysis needs are the extremes **of $\mathcal{C}_1$** — a set defined by the very answer being computed. Knowing them in advance is knowing the solution, so no sorting shortcut can exist, and the $O(n^{2k})$ enumeration is not laziness but the price of that circularity.
+![](../figs/chapter3/algorithm/sort_trap.png)
+
 #### The algorithm in a nutshell
 * We guess the subset of radii types that appear in $\mathcal{C}$ (e.g $r_1, r_5, r_{k-1}$) - total $2^k$ possibilities (power-set of a set of $k$ elements)
 * Compute candidate solutions and - 

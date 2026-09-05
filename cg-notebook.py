@@ -166,6 +166,7 @@ def _(mo):
 
 @app.cell
 def _(ascene, sf):
+    sort_trap_fig = sf.fig_sort_trap(ascene, save="figs/chapter3/algorithm/sort_trap.png")
     guess_fig = sf.fig_guess(ascene, save="figs/chapter3/algorithm/guess.png")
     slabs_fig = sf.fig_slabs(ascene, save="figs/chapter3/algorithm/slabs.png")
     filter_fig = sf.fig_filter(ascene, save="figs/chapter3/algorithm/filter.png")
@@ -174,7 +175,7 @@ def _(ascene, sf):
         save="figs/chapter3/algorithm/invalid_guess.png",
     )
 
-    guess_fig, invalid_guess_fig, slabs_fig, filter_fig
+    sort_trap_fig, guess_fig, invalid_guess_fig, slabs_fig, filter_fig
     return
 
 
