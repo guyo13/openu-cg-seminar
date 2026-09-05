@@ -95,12 +95,52 @@ npm run build        # static site -> slides/dist
 npm run export:pptx  # -> slides-export.pptx (needs playwright-chromium, already a devDep)
 ```
 
+### Figures in the deck
+
 Figures are **not** duplicated into `slides/`. They stay at the repo root under `figs/`
-and slides reference them relatively (`../figs/chapter2/...`), which is outside Slidev's
-Vite root — hence `slides/vite.config.ts` widens `server.fs.allow` to the repo root.
-Do not "fix" this by moving figures into `slides/public/`: a `public/figs` symlink was
-tried and fails, because Vite's public-dir handling does not follow directory symlinks.
-Regenerating a figure in the notebook updates the deck with no copy step.
+and slides reference them relatively (`../figs/chapter2/...`), so regenerating a figure
+in the notebook updates the deck with no copy step. That path is outside Slidev's Vite
+root, which costs two pieces of config in `slides/vite.config.ts` — both load-bearing:
+
+1. `server.fs.allow` is widened to the repo root. Without it the **build** fails with
+   "resolves outside of Vite server.fs.allow".
+2. A dev-only plugin (`apply: 'serve'`) serves `/figs/**` from the repo-root `figs/`
+   directory. Without it the **build succeeds but `npm run dev` shows broken images** —
+   dev leaves the URL literal and base-prefixes it to `/../figs/...`, the browser
+   normalises that to `/figs/...`, and Vite's SPA fallback answers with `index.html`.
+   The give-away is a 200 with `Content-Type: text/html` where a PNG was expected, so
+   check the content type, not the status code.
+
+Dev and build resolve these paths differently, so a passing `npm run build` does not
+prove the dev server renders images. Check both.
+
+Do not "fix" any of this by moving figures into `slides/public/`: a `public/figs`
+symlink was tried and fails, because Vite's public-dir handling does not follow
+directory symlinks.
+
+### LaTeX inside HTML blocks
+
+Math in a raw HTML block only renders if blank lines separate the content from the
+tags — CommonMark ends an HTML block at a blank line, and only then is the inner
+content markdown-processed (and so KaTeX-processed).
+
+```markdown
+<!-- broken: renders the literal text "$\mathcal{C}_1$" -->
+<div class="text-sm">
+$\mathcal{C}_1$
+</div>
+
+<!-- renders: blank line after the opening tag and before the closing one -->
+<div class="text-sm">
+
+$\mathcal{C}_1$
+
+</div>
+```
+
+The tight form compiles to a raw text node with the `$...$` intact; the spaced form
+compiles to KaTeX spans. To audit, build and grep the slides chunk in `slides/dist/`
+for surviving `$\...$` literals — any hit is unrendered math.
 
 ## Notes and docs
 
