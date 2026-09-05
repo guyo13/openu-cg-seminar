@@ -94,8 +94,10 @@ layout: two-cols
 <img src="../figs/chapter3/notation/type_classes_fig.png" class="h-80" />
 
 <div class="text-sm opacity-70">
+
 $\mathcal{C} = \mathcal{C}_1 \cup \mathcal{C}_2$ — and this mixing is exactly
 why unit-disk techniques don't transfer.
+
 </div>
 
 <!-- ~1.5 min. "Why can't we solve each radius type separately and glue?"
@@ -181,7 +183,9 @@ In words: **no point hiding in the slab above $ab$ can be farther from $p$ than 
 </div>
 
 <div v-click class="pt-4 text-sm opacity-70">
+
 Proof by sliding: shoot the ray $p \to q$, find where it exits the slab, and slide the exit point away from the closest point of the boundary — the distance only grows, and it ends at $a$ or $b$.
+
 </div>
 
 <!-- ~1.5 min. State it in words before symbols. The hypothesis y(p) >= y(q)
@@ -238,7 +242,9 @@ doesn't know that. -->
 <img src="../figs/chapter3/algorithm/invalid_guess.png" class="h-90 mx-auto" />
 
 <div class="text-sm opacity-70">
+
 If $\Psi$ isn't itself pairwise intersecting: discard (an $O(k^2)$ check). Wrong-but-valid guesses just produce smaller cliques and lose the max.
+
 </div>
 
 <!-- ~1 min, cuttable. Soundness in one breath: no guess can output a
