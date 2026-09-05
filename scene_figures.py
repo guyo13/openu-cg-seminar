@@ -557,3 +557,44 @@ def fig_assembly(ascene, save=None):
         fontsize=11)
     fig.tight_layout()
     return _finish(fig, save)
+
+
+def fig_sort_trap(ascene, save=None):
+    """Misconception slide — 'why not just sort?': the sorted extremes of the
+    type-1 disks are not even in the maximum clique; the true anchors sit
+    unremarkably mid-order."""
+    a, s = ascene, ascene.s
+    t1 = [i for i in range(s.n) if s.typ[i] == 1]
+    lo = min(t1, key=lambda i: s.pos[i][0])
+    hi = max(t1, key=lambda i: s.pos[i][0])
+    true_anchors = list(a.guess[1])
+    fig, ax = _base_axes(s)
+    for i in range(s.n):
+        if i in (lo, hi):
+            _disk(ax, s, i, "#e03131", lw=3.0, accent=True, fill_alpha=.3)
+        elif i in true_anchors:
+            _disk(ax, s, i, PSI_EDGE, lw=3.0, accent=True, fill_alpha=.3)
+        else:
+            _disk(ax, s, i, TYPE_EDGE[s.typ[i]], alpha=.16, label_alpha=.4)
+    for i, tag in ((lo, "sorted leftmost"), (hi, "sorted rightmost")):
+        ax.annotate(f"{tag}\nNOT in $\\mathcal{{C}}$!", s.pos[i],
+                    textcoords="offset points", xytext=(0, -30), ha="center",
+                    fontsize=10, color="#e03131", zorder=6)
+    mid = (s.pos[true_anchors[0]] + s.pos[true_anchors[1]]) / 2
+    ax.annotate("the TRUE anchors $a_1, b_1$:\ndefined by the unknown"
+                " $\\mathcal{C}$", mid + np.array([-2.4, 1.7]), fontsize=10,
+                color=PSI_EDGE, ha="center",
+                xycoords="data", zorder=6)
+    handles = [
+        Line2D([], [], color="#e03131", lw=2.6,
+               label="extremes of ALL type-1 disks (sorting finds these)"),
+        Line2D([], [], color=PSI_EDGE, lw=2.6,
+               label=r"extremes of $\mathcal{C}_1$ (what the analysis needs)"),
+    ]
+    ax.legend(handles=handles, loc="lower left", fontsize=9)
+    ax.set_title(
+        '"Just sort the type-1 disks and take the extremes"? — the sorted\n'
+        "extremes aren't in the clique; the right pair is only defined by"
+        " the answer", fontsize=11)
+    fig.tight_layout()
+    return _finish(fig, save)
