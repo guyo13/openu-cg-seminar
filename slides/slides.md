@@ -25,10 +25,20 @@ it sooner." -->
 
 ## Definitions
 
+<v-clicks>
+
+- A **geometric intersection graph**: take any family of geometric objects
+  (intervals, segments, rectangles, disks…) — one vertex per object, an edge
+  exactly when two objects intersect. The geometry _is_ the adjacency rule.
+- The abstract graph forgets the geometry: two different arrangements can give
+  the same graph. We assume the **representation** (centers + radii) is given
+  as input.
 - A **disk graph** $\mathcal{D}$: vertices are disks, edges join intersecting disks.
 - Adjacency is a distance condition: $D_{a,r_1}$ and $D_{b,r_2}$ intersect $\iff |ab| \le r_1 + r_2$.
 - $\mathcal{D}_k$: disk graph with $k$ distinct radii ("radius types").
 - A **clique**: pairwise intersecting disks. We want a **maximum** one.
+
+</v-clicks>
 
 <!-- ~1.5 min. Stress the iff: every adjacency claim later is secretly a
 distance claim. The graph forgets the geometry — the disk representation is
@@ -42,7 +52,7 @@ part of the input. -->
 
 - **1990** — Clark, Colbourn, Johnson: polynomial algorithm for **unit** disks.
 - **Then: 35 years of nothing.** NP-hard for rays, ellipses, triangles, strings, balls… polynomial for unit disks, rectangles, trapezoids. Disk graphs: **unknown, either way.**
-- Called *"a notorious open question in computational geometry"*, *"elusive with no new positive or negative results"*.
+- Called _"a notorious open question in computational geometry"_, _"elusive with no new positive or negative results"_.
 - **Cabello, 2015:** is even the **two-radii** case ($k=2$) polynomial? — Open.
 - **This paper:** yes — $O(n^{2k}\,\mathrm{poly}(n))$, polynomial for every fixed $k$.
 
@@ -106,6 +116,23 @@ different corners of the arrangement. -->
 
 ---
 
+## Slabs — the stage for everything
+
+<img src="../figs/chapter2/perliminaries/slab_geometry.png" class="h-72 mx-auto" />
+
+- The **upper slab** $U_{ab}$: everything above segment $ab$, between the
+  vertical lines through $a$ and $b$. The lower slab $\overline{U}_{ab}$
+  mirrors it below.
+- CG fundamentals: a slab is just an intersection of
+  **three half-planes** ($x \ge x_a$, $x \le x_b$, one side of $\ell_{ab}$) —
+  about as simple as a region gets.
+
+<!-- ~1 min. Plant the contrast for the epilogue: prior work used lenses
+(curved, pair-dependent); this paper's entire innovation fits in three
+half-planes. -->
+
+---
+
 ## The algorithm, from ten kilometers
 
 <div class="text-xl leading-relaxed pt-6">
@@ -120,6 +147,38 @@ Each arrow is one act of this talk. The word to interrogate first: <b>"guess"</b
 
 <!-- ~1.5 min. The roadmap; echo it before each act. Everything hard hides
 inside the word "guess". -->
+
+---
+
+## The special disks: $\Psi$
+
+For the (unknown!) maximum clique $\mathcal{C} \subseteq \mathcal{D}_k$, define for each radius type
+$i$ appearing in it:
+
+- $a_i$ — the **leftmost** center among $\mathcal{C}_i$
+- $b_i$ — the **rightmost** center among $\mathcal{C}_i$ &nbsp; ($a_i = b_i$ allowed)
+- $\Psi$ — the set of these $\le 2k$ **anchor disks**
+
+<div v-click class="pt-6 text-lg">
+
+<b>Intuition:</b> The disks in $\Psi$ "trap" or "bound" all the disks in the maximum clique!
+
+</div>
+
+<div v-click class="pt-6 text-lg">
+So we "only" need the leftmost and rightmost disk of each type.<br>
+<b>How hard can that be?</b>
+</div>
+
+<div v-click class="pt-6 text-lg">
+
+<b>Spoiler:</b> Remember what $\mathcal{C}\_i$ is...?
+
+</div>
+
+<!-- ~1 min. Deadpan the last line and advance immediately to the trap. The
+word "unknown" in the first sentence is the seed — don't stress it yet, let
+the next slide detonate it. -->
 
 ---
 
@@ -142,32 +201,32 @@ The extremes we need are extremes OF C_1 — a set nobody knows. -->
 
 <v-click>
 
-**Resolution — the guessing framework:** enumerate *every* candidate per type:
+**Resolution — the guessing framework:** enumerate _every_ candidate per type:
 
-$$\underbrace{\binom{n}{0}}_{\text{type absent}} + \underbrace{\binom{n}{1}}_{a_i = b_i} + \underbrace{\binom{n}{2}}_{a_i \ne b_i} = O(n^2) \;\;\xrightarrow{\;k\text{ types}\;}\;\; O(n^{2k}) \text{ guesses}
+$$
+\underbrace{\binom{n}{0}}_{\text{type absent}} + \underbrace{\binom{n}{1}}_{a_i = b_i} + \underbrace{\binom{n}{2}}_{a_i \ne b_i} = O(n^2) \;\;\xrightarrow{\;k\text{ types}\;}\;\; O(n^{2k}) \text{ guesses}
 $$
 
 </v-click>
 
 <v-clicks>
 
-- *"Leftmost and rightmost" is a sentence from the **analysis**, not the **algorithm**.* The algorithm never detects the right pair — the right iteration simply **wins the final max**.
+- _"Leftmost and rightmost" is a sentence from the **analysis**, not the **algorithm**._ The algorithm never detects the right pair — the right iteration simply **wins the final max**.
 - The miracle: the unknowable information is only $2k$ disks. **A constant-size witness** — that's what makes the price affordable.
 
 </v-clicks>
 
 <!-- ~1.5 min. THE conceptual slide. n^{2k} is the price tag on circular
-information. If they get this, the rest of the construction is bookkeeping. -->
+information. If they get this, the rest of the construction is bookkeeping.
 
----
-
-## Slabs
-
-<img src="../figs/chapter2/perliminaries/slab_geometry.png" class="h-80 mx-auto" />
-
-Upper slab $U_{ab}$ and lower slab $\overline{U}_{ab}$ — the setting for the one geometric lemma.
-
-<!-- ~1 min. Vertical lines through a and b; above / below the segment. -->
+If asked "what's a witness?": a witness (or certificate) is a small piece
+of side information that makes a hard problem easy — once you hold it, the
+full solution can be reconstructed and verified in polynomial time. Here the
+witness is the 2k anchor disks: holding the correct anchors, the slabs +
+filter + matching rebuild the entire maximum clique, however large it is. The
+algorithm doesn't receive the witness; it BUYS it by enumeration — which is
+why witness SIZE is everything: size 2k costs n^{O(k)}; a witness of size
+Θ(|C|) would cost exponential time and the approach would be worthless. -->
 
 ---
 
@@ -319,7 +378,7 @@ is exactly why one more step exists. -->
 
 <div class="text-sm">
 
-clique in $X \cup Y$ $=$ independent set in complement $H$ *(definition)* — $H$ **bipartite** *(Lemma 3.1)* — $\alpha(H) = |X{\cup}Y| - \tau(H)$ *(Gallai)* — $\tau(H) = \nu(H)$ *(Kőnig, bipartite)* — $\nu$ by max matching: **solved problem**, this is the $f(n)$.
+clique in $X \cup Y$ $=$ independent set in complement $H$ _(definition)_ — $H$ **bipartite** _(Lemma 3.1)_ — $\alpha(H) = |X{\cup}Y| - \tau(H)$ _(Gallai)_ — $\tau(H) = \nu(H)$ _(Kőnig, bipartite)_ — $\nu$ by max matching: **solved problem**, this is the $f(n)$.
 
 </div>
 
@@ -344,13 +403,13 @@ correct guess the output has size >= |C|; soundness caps it at |C|. -->
 
 ## The cost ledger
 
-| step | cost |
-| --- | --- |
-| guesses: $\left[\binom{n}{0}+\binom{n}{1}+\binom{n}{2}\right]^k$ | $O(n^{2k})$ iterations |
-| $\Psi$ pairwise check | $O(k^2)$ |
-| filter — each disk tested once **against its own type**, $\sum_i n_i = n$ | $O(nk)$ |
-| build the graph on $X \cup Y$ | $O(n^2)$ |
-| maximum matching | $f(n)$ |
+| step                                                                      | cost                   |
+| ------------------------------------------------------------------------- | ---------------------- |
+| guesses: $\left[\binom{n}{0}+\binom{n}{1}+\binom{n}{2}\right]^k$          | $O(n^{2k})$ iterations |
+| $\Psi$ pairwise check                                                     | $O(k^2)$               |
+| filter — each disk tested once **against its own type**, $\sum_i n_i = n$ | $O(nk)$                |
+| build the graph on $X \cup Y$                                             | $O(n^2)$               |
+| maximum matching                                                          | $f(n)$                 |
 
 $$\textbf{Total: } O\!\left(n^{2k}\,(f(n) + n^2)\right)$$
 
@@ -387,8 +446,10 @@ NP-hardness. The witness-size framing ties back to the misconception
 slide: difficulty = how much solution-defined information you must buy. -->
 
 ---
+
 layout: center
 class: text-center
+
 ---
 
 # Epilogue
@@ -429,13 +490,13 @@ layout: center
 
 ## Same framework — different split
 
-| | CCJ 1990 (unit) | Keil–Mondal 2025 ($k$ radii) |
-| --- | --- | --- |
-| guess | farthest pair | leftmost + rightmost **per type** |
-| region | lens | vertical slabs |
-| two camps | lens halves | upper / lower slabs |
-| forced by | farthest-pair geometry | **Lemma 2.1** |
-| finish | bipartite matching | bipartite matching |
+|           | CCJ 1990 (unit)        | Keil–Mondal 2025 ($k$ radii)      |
+| --------- | ---------------------- | --------------------------------- |
+| guess     | farthest pair          | leftmost + rightmost **per type** |
+| region    | lens                   | vertical slabs                    |
+| two camps | lens halves            | upper / lower slabs               |
+| forced by | farthest-pair geometry | **Lemma 2.1**                     |
+| finish    | bipartite matching     | bipartite matching                |
 
 <div class="pt-4 text-center text-sm opacity-80">
 The framework was right all along. The <b>split</b> was wrong.
