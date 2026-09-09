@@ -417,7 +417,7 @@ is exactly why one more step exists. -->
 - $H$ is **bipartite** _(Lemma 3.1)_* 
 - $\alpha(H) = |X{\cup}Y| - \tau(H)$ _(Gallai's identity)_
 - $\tau(H) = \nu(H)$ _(Kőnig's theorem on bipartite graphs)_
-- $\nu$ is computed by max matching: **solved problem**, this is the $f(n)$ in the algorithm's run time.
+- $\nu$ is computed by max matching: **solved problem** (e.g: *Hopcroft-Karp*), this is the $f(n)$ in the algorithm's run time.
 
 <div class="text-sm my-4">
 
