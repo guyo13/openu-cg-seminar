@@ -598,3 +598,71 @@ def fig_sort_trap(ascene, save=None):
         " the answer", fontsize=11)
     fig.tight_layout()
     return _finish(fig, save)
+
+
+def fig_lemma31_relay(ascene, p_idx=2, q_idx=9, save=None):
+    """Lemma 3.1's proof on a real instance: p (higher) and q (lower) are
+    two survivors of X; q's type supplies the slab and the anchors, the
+    Psi-filter supplies the distance bound — the relay in one picture.
+    Defaults: p = s3 (type 1), q = b4 (type 2)."""
+    a, s = ascene, ascene.s
+    p, q = p_idx, q_idx
+    if s.pos[p][1] < s.pos[q][1]:
+        p, q = q, p                       # ensure p is the higher point
+    tq = s.typ[q]
+    aj, bj = a.guess[tq]
+
+    fig, ax = _base_axes(s)
+    # shade ONLY the lower point's upper slab
+    (_, _), (ylo, yhi) = _limits(s)[0], _limits(s)[1]
+    xa, xb = sorted((s.pos[aj][0], s.pos[bj][0]))
+    xs = np.linspace(xa, xb, 60)
+    ys = np.array([a.seg_y(tq, x) for x in xs])
+    ax.fill_between(xs, ys, yhi, color=TYPE_FACE[tq], alpha=.30, zorder=0)
+    for xw in (xa, xb):
+        ax.plot([xw, xw], [ylo, yhi], color=TYPE_EDGE[tq], ls="--", lw=1.2,
+                zorder=1)
+
+    for i in range(s.n):
+        if i in (p, q):
+            _disk(ax, s, i, X_EDGE, lw=3.0, accent=True, fill_alpha=.25)
+        elif i in (aj, bj):
+            _disk(ax, s, i, PSI_EDGE, lw=3.0, accent=True, fill_alpha=.2)
+        else:
+            _disk(ax, s, i, "#adb5bd", lw=1.0, alpha=.08, label_alpha=.2)
+
+    ax.plot(*np.c_[s.pos[aj], s.pos[bj]], color=PSI_EDGE, lw=2.2, zorder=4)
+
+    d_pq = np.linalg.norm(s.pos[p] - s.pos[q])
+    d_pa = np.linalg.norm(s.pos[p] - s.pos[aj])
+    d_pb = np.linalg.norm(s.pos[p] - s.pos[bj])
+    rsum = s.rad[p] + s.rad[q]
+
+    # the two anchor distances (dotted), and the proved pair (bold dashed)
+    for t_idx, dv in ((aj, d_pa), (bj, d_pb)):
+        ax.plot(*np.c_[s.pos[p], s.pos[t_idx]], color="#868e96", ls=":",
+                lw=1.8, zorder=4)
+        mid = (s.pos[p] + s.pos[t_idx]) / 2
+        ax.annotate(f"{dv:.2f}", mid, textcoords="offset points",
+                    xytext=(4, 4), fontsize=9, color="#868e96", zorder=6)
+    ax.plot(*np.c_[s.pos[p], s.pos[q]], color="#333", ls="--", lw=2.6,
+            zorder=5)
+    ax.annotate(f"$|pq| = {d_pq:.2f}$",
+                (s.pos[p] + s.pos[q]) / 2, textcoords="offset points",
+                xytext=(-72, 12), fontsize=10, color="#333", zorder=6)
+
+    ax.annotate(
+        rf"$|pq| \leq \max\{{|pa_2|, |pb_2|\}} \leq r_1 + r_2$"
+        "\n"
+        rf"${d_pq:.2f} \leq \max\{{{d_pa:.2f},\, {d_pb:.2f}\}} \leq {rsum:.1f}$"
+        r"  ✓",
+        (0.02, 0.03), xycoords="axes fraction", fontsize=12,
+        bbox=dict(boxstyle="round,pad=0.5", fc="white", ec="#868e96"),
+        zorder=7)
+    ax.set_title(
+        rf"The relay, live: $p = {s.name[p]}$ (higher, type 1) and"
+        rf" $q = {s.name[q]}$ (lower, type 2)"
+        "\nq's type supplies the slab AND the anchors; the $\\Psi$-filter"
+        " supplies the bound", fontsize=11)
+    fig.tight_layout()
+    return _finish(fig, save)

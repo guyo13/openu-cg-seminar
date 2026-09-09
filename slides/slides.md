@@ -322,6 +322,13 @@ own type's slab — that's what "leftmost/rightmost of C_i" MEANS. -->
 
 ## The filter: $X$ and $Y$ are born
 
+<div class="text-sm opacity-80">
+
+- $X_i$ — the **type-$i$** disks with centers in the **upper** slab $U_{a_ib_i}$ that intersect **every** disk of $\Psi$; &nbsp; $X = X_1 \cup \dots \cup X_k$
+- $Y_i$ — the same with the **lower** slab $\overline{U}_{a_ib_i}$; &nbsp; $Y = Y_1 \cup \dots \cup Y_k$
+
+</div>
+
 <img src="../figs/chapter3/algorithm/filter.png" class="h-95 mx-auto" />
 
 <!-- ~1.5 min. Keep a disk iff center in its type's slab AND intersects
@@ -333,6 +340,8 @@ discard reasons aloud: slab misses, Psi misses. -->
 ## Lemma 3.1 — the survivors are two cliques
 
 > For all $i, j$: the disks of $X_i \cup X_j$ are mutually adjacent. (Same for $Y$.)
+
+**Setup:** let $D_{p,r_i} \in X_i$ and $D_{q,r_j} \in X_j$ be any two survivor disks — we show their centers satisfy $|pq| \le r_i + r_j$, so they intersect.
 
 **One rule generates every case:** the anchors come from the type of the **lower** point.
 
@@ -350,8 +359,22 @@ distances). The bound produced is always exactly the bound needed. Note
 what the proof DOESN'T use: that the guess is correct. That's soundness. -->
 
 ---
+layout : center
+---
+## Lemma 3.1 - Visualized
+
+<img src="../figs/chapter3/algorithm/lemma31_relay.png" class="h-100 pl-4" />
+
+---
 
 ## $X$ is one clique — guaranteed
+
+
+<div class="text-sm opacity-80 mb-4">
+
+- $X = X_1 \cup \dots \cup X_k,\ Y = Y_1 \cup \dots \cup Y_k \underset{Lemma 3.1}\Rightarrow X, Y \text{are cliques}$.
+
+</div>
 
 <img src="../figs/chapter3/algorithm/x_clique.png" class="h-95 mx-auto" />
 
@@ -372,17 +395,31 @@ is exactly why one more step exists. -->
 
 ## The reduction: two cliques + missing cross-edges
 
-<img src="../figs/chapter3/algorithm/complement.png" class="h-90 mx-auto" />
 
-<v-click>
 
-<div class="text-sm">
+- A clique in $X \cup Y$ $=$ independent set in its _complement_ graph $H$ __(by definition)__
+- $H$ is **bipartite** _(Lemma 3.1)_* 
+- $\alpha(H) = |X{\cup}Y| - \tau(H)$ _(Gallai's identity)_
+- $\tau(H) = \nu(H)$ _(Kőnig's theorem on bipartite graphs)_
+- $\nu$ is computed by max matching: **solved problem**, this is the $f(n)$ in the algorithm's run time.
 
-clique in $X \cup Y$ $=$ independent set in complement $H$ _(definition)_ — $H$ **bipartite** _(Lemma 3.1)_ — $\alpha(H) = |X{\cup}Y| - \tau(H)$ _(Gallai)_ — $\tau(H) = \nu(H)$ _(Kőnig, bipartite)_ — $\nu$ by max matching: **solved problem**, this is the $f(n)$.
+<div class="text-sm my-4">
+
+<h5>Legend:</h5>
+
+- $\alpha(H)$ - The size of the Maximum Independent Set in $H$
+- $\tau(H)$ - The size of the Minimum Vertex Cover in $H$
+- $\nu(H)$ - The size of the Maximum Matching in $H$
 
 </div>
 
-</v-click>
+> *Any two cliques in a graph form a co-bipratite graph 
+ 
+---
+
+## The reduction: Visualized
+
+<img src="../figs/chapter3/algorithm/complement.png" class="h-90 mx-auto" />
 
 <!-- ~2.5 min. Do the arithmetic aloud: 3 - 1 = 2, chosen {s3, b4}. The
 chain is stated, the computation black-boxed. If asked "how does the
@@ -393,7 +430,10 @@ side" (false in general; see Q&A notes). -->
 
 ## Assembly
 
-<img src="../figs/chapter3/algorithm/assembly.png" class="h-95 mx-auto" />
+- **Output of the iteration:** $\Psi \;\cup\; \big(\text{max clique found in } X \cup Y\big)$ — a genuine clique: every survivor intersects all of $\Psi$ by the filter, and $\Psi$ itself was validated pairwise-intersecting.
+- Final answer: the **max over all $O(n^{2k})$ guesses**.
+
+<img src="../figs/chapter3/algorithm/assembly.png" class="h-95 mx-auto mt-3" />
 
 <!-- ~1 min. Output = Psi ∪ chosen: a genuine clique (everything meets
 Psi; Psi validated). Take the max over all O(n^{2k}) iterations. For the
@@ -441,7 +481,7 @@ result — happy to point you to Sections 4–5." Do NOT improvise details. -->
 
 ## What this is — and isn't
 
-- Polynomial **for every fixed $k$** — but $k$ sits in the exponent: this is **XP**, not FPT ($f(k)\cdot n^c$).
+- Polynomial **for every fixed $k$** — but $k$ sits in the exponent: this is **XP** ($n^{f(k)}$), not FPT ($f(k)\cdot n^c$).
 - Why: the witness $\Psi$ is **solution-defined**; enumerating a size-$2k$ witness costs $n^{\Theta(k)}$. Avoiding that enumeration — nobody knows how.
 - General disk graphs (unbounded radii): **open in both directions.**
   No polynomial algorithm, no hardness proof — either would be a major result.
@@ -449,11 +489,6 @@ result — happy to point you to Sections 4–5." Do NOT improvise details. -->
 <!-- ~1.5 min. Vocabulary matters here: XP not FPT. Don't speculate on
 NP-hardness. The witness-size framing ties back to the misconception
 slide: difficulty = how much solution-defined information you must buy. -->
-
----
-
-layout: center
-class: text-center
 
 ---
 
@@ -470,13 +505,24 @@ epilogue is in the slides. -->
 
 ## 1990: the lens
 
-<img src="../figs/chapter4/ccj_lens.png" class="h-95 mx-auto" />
+- Same idea: Guess the optimal partition into two cliques $\rightarrow$ compute max-matching $\rightarrow$ take the max over all guesses
+- Different geometric method: Guess the farthest-apart disks in the (unknown) clique - "traps" the rest of the clique
+
+<img src="../figs/chapter4/ccj_lens.png" class="h-85 mx-auto" />
 
 <!-- ~2.5 min. CCJ's recipe in our color grammar: guess the farthest pair
 (green), members live in the lens, the line through the pair splits it
 into two guaranteed cliques — cross edges sometimes missing — matching.
 Sound familiar? Same skeleton. Companion figure: the equilateral-triangle
 lens split (chapter2 lens_geometry) if asked how the split is proven. -->
+
+---
+
+## 1990: the lens
+
+- Why does it trap? The equilateral triangle that occurs inside the lens...
+
+<img src="../figs/chapter2/perliminaries/lens_geometry.png" class="h-95 mx-auto" />
 
 ---
 
