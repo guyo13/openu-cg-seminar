@@ -67,12 +67,14 @@
             "id": "f20739518f8f7bbb",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "markdown",
               "state": {
-                "file": "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf"
+                "file": "README.md",
+                "mode": "preview",
+                "source": false
               },
-              "icon": "lucide-file-text",
-              "title": "The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2"
+              "icon": "lucide-file",
+              "title": "README"
             }
           }
         ],
@@ -243,8 +245,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "f20739518f8f7bbb",
+  "active": "9965c20fb1103dce",
   "lastOpenFiles": [
+    "docs/qa-armor-notes.md",
+    "README.md.tmp.269462.99ed381603c4",
+    "README.md.tmp.269462.bd933746536f",
+    "figs/chapter3/algorithm/lemma31_relay.png",
+    "docs/The Maximum Clique Problem in a Disk Graph Made Easy -2404.03751v2.pdf",
     "slides/dist/_redirects",
     "slides/dist/404.html",
     "slides/dist/assets/slidev/two-cols-D0nqCYYi.js",
@@ -252,10 +259,6 @@
     "slides/dist/assets/slidev/presenter-DGbTODic.js",
     "slides/dist/assets/slidev/play-B_42C_00.js",
     "slides/dist/assets/slidev/overview-BofTNeP2.js",
-    "slides/dist/assets/slidev/notes-edit-CaA4lJw9.js",
-    "slides/dist/assets/slidev/notes-BZlmtcC-.js",
-    "slides/dist/assets/slidev/md-Czc9pGa8.js",
-    "slides/dist/assets/slidev/entry-UVEyygH6.js",
     "slides/dist/assets/x_clique-TEcCmPpJ.png",
     "slides/dist/assets/type_classes_fig-sOZpRt6y.png",
     "slides/dist/assets/sort_trap-Cc7xD97b.png",
@@ -265,11 +268,9 @@
     "slides/dist/assets/max_clique_fig-BtfXxEjC.png",
     "slides/dist/assets/logo-BYkHSa_O.png",
     "slides/dist/assets/lens_deception-CtJEBtmz.png",
-    "slides/dist/assets/lemma21_case_vertical-DcnP_Fzp.gif",
     "slides/mathtest.md",
     "docs/Notes on the Maximum Clique paper.md",
     "docs/Clique paper study checklist.md",
-    "docs/qa-armor-notes.md",
     "docs/fable-chat-transcript.md",
     "CLAUDE.md",
     "slides/node_modules/@oxc-parser/binding-linux-x64-musl/README.md",
