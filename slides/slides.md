@@ -422,16 +422,20 @@ cheap. The "each disk once" beat: no k·n double count. -->
 
 **Theorem 3.2.** A maximum clique in a disk graph with $k$ radius types is computable in $O(n^{2k}(f(n)+n^2))$ time.
 
-<v-clicks>
+<v-click>
 
 - **Settles Cabello's question:** $k = 2$ is polynomial. ✓
-- Same slab idea → precompute max cliques for **all rectangular range queries** over unit disks in $O(n^5 \log n)$ — factor $n^{4/3}$ faster than lens-based.
-- Extends to **ball graphs** with centers on $r$ planes: $O(n^{2rk}\,\mathrm{poly}(n,r))$ — contrast: general ball graphs are NP-hard.
 
-</v-clicks>
+</v-click>
 
-<!-- ~1.5 min. Bonus results at one-sentence depth each; the technique
-generalizes, details in the paper. -->
+<div v-click class="pt-6 text-sm opacity-70">
+The paper further extends the slab technique to rectangular range queries and
+to restricted ball graphs — beyond today's scope.
+</div>
+
+<!-- ~1 min. If asked about the extensions: "they reuse the same slab idea
+in preprocessing / 3D settings; I chose to spend our time owning the core
+result — happy to point you to Sections 4–5." Do NOT improvise details. -->
 
 ---
 
@@ -439,7 +443,8 @@ generalizes, details in the paper. -->
 
 - Polynomial **for every fixed $k$** — but $k$ sits in the exponent: this is **XP**, not FPT ($f(k)\cdot n^c$).
 - Why: the witness $\Psi$ is **solution-defined**; enumerating a size-$2k$ witness costs $n^{\Theta(k)}$. Avoiding that enumeration — nobody knows how.
-- General disk graphs (unbounded radii): **open in both directions.** No algorithm, no hardness. The ball-graph contrast says the boundary is genuinely subtle.
+- General disk graphs (unbounded radii): **open in both directions.**
+  No polynomial algorithm, no hardness proof — either would be a major result.
 
 <!-- ~1.5 min. Vocabulary matters here: XP not FPT. Don't speculate on
 NP-hardness. The witness-size framing ties back to the misconception

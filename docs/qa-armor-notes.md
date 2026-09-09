@@ -50,10 +50,10 @@ why this false belief feels true on small pictures.)
   solution-defined anchors — nobody knows how.
 - k unbounded ⇒ k can be Θ(n) ⇒ n^{Θ(n)}: not polynomial. General disk
   graph max clique: **open in both directions** (no poly algorithm, no
-  hardness proof). Do NOT say "probably NP-hard" — the paper's ball-graph
-  contrast (NP-hard there, poly here for fixed k, r) shows the boundary is
-  subtle. FPT results exist for related settings (Bonnet et al., cited in
-  the intro) — don't claim this paper is one of them.
+  hardness proof). Do NOT say "probably NP-hard". FPT results exist for
+  related settings (Bonnet et al., cited in the intro) — don't claim this
+  paper is one of them. Range-query / ball-graph extensions: out of scope
+  by choice — deflect, don't improvise.
 
 ## 4. Recurring subtleties (each burned me once in the stress quiz)
 
