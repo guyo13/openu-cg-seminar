@@ -197,7 +197,7 @@ The extremes we need are extremes OF C_1 — a set nobody knows. -->
 ## The circularity, and its price
 
 - $a_i, b_i$ are extremes **of $\mathcal{C}_i$** — a set defined by the solution $\mathcal{C}$.
-- Knowing them in advance = knowing the answer. **No shortcut can exist.**
+- Knowing them in advance = knowing the answer. **No shortcut is known.**
 
 <v-click>
 
@@ -237,7 +237,7 @@ why witness SIZE is everything: size 2k costs n^{O(k)}; a witness of size
 
 <div class="pt-6">
 
-In words: **no point hiding in the slab above $ab$ can be farther from $p$ than one of the two endpoints themselves.**
+In words: **no point ($q$) hiding in the slab above $ab$ can be farther from $p$ than one of the two endpoints themselves.**
 
 </div>
 
@@ -288,6 +288,9 @@ cases o slides away from the point nearest p and lands on an endpoint. -->
 
 ## One guess, concretely
 
+- Back to the "guessing game" in our example
+- We need to guess $\Psi$...
+
 <img src="../figs/chapter3/algorithm/guess.png" class="h-95 mx-auto" />
 
 <!-- ~1 min. One iteration of the O(n^{2k}): anchors per type, Psi = the
@@ -313,6 +316,8 @@ non-clique; the correct guess is never detected, only out-competed for. -->
 
 ## The slabs of the guess
 
+- We create the Slabs from our guessed disks
+
 <img src="../figs/chapter3/algorithm/slabs.png" class="h-95 mx-auto" />
 
 <!-- ~1 min. For the correct guess, every disk of C has its center in its
@@ -322,9 +327,11 @@ own type's slab — that's what "leftmost/rightmost of C_i" MEANS. -->
 
 ## The filter: $X$ and $Y$ are born
 
+- Slabs drawn. Filter the graph:
+
 <div class="text-sm opacity-80">
 
-- $X_i$ — the **type-$i$** disks with centers in the **upper** slab $U_{a_ib_i}$ that intersect **every** disk of $\Psi$; &nbsp; $X = X_1 \cup \dots \cup X_k$
+- For each radius type i; $X_i$ — the **type-$i$** disks with centers in the **upper** slab $U_{a_ib_i}$ that intersect **every** disk of $\Psi$; &nbsp; $X = X_1 \cup \dots \cup X_k$
 - $Y_i$ — the same with the **lower** slab $\overline{U}_{a_ib_i}$; &nbsp; $Y = Y_1 \cup \dots \cup Y_k$
 
 </div>
@@ -337,19 +344,28 @@ discard reasons aloud: slab misses, Psi misses. -->
 
 ---
 
-## Lemma 3.1 — the survivors are two cliques
+## Lemma 3.1 — the survivors ($X$, $Y$) are two cliques
 
+**Formally:**
 > For all $i, j$: the disks of $X_i \cup X_j$ are mutually adjacent. (Same for $Y$.)
 
-**Setup:** let $D_{p,r_i} \in X_i$ and $D_{q,r_j} \in X_j$ be any two survivor disks — we show their centers satisfy $|pq| \le r_i + r_j$, so they intersect.
+<div v-click>
 
-**One rule generates every case:** the anchors come from the type of the **lower** point.
+**Setup:** let $D_{p,r_i} \in X_i$ and $D_{q,r_j} \in X_j$ be any two survivor disks — we show their centers satisfy $|pq| \le r_i + r_j$, so they intersect. _(We'll use Lemma 2.1 and the Slabs)_
+
+</div>
+
+<div v-click>
+
+**One rule generates every case:** the slab anchors come from the type of the disk with the **lower** center.
+
+</div>
 
 <v-clicks>
 
 - lower point $q$ (type $j$) supplies the slab **and** the anchors $a_j, b_j$;
 - Lemma 2.1: $|pq| \le \max\{|pa_j|, |pb_j|\}$;
-- $p$'s disk intersects both anchor disks (they're in $\Psi$!) $\Rightarrow \max\{|pa_j|, |pb_j|\} \le r_i + r_j$;
+- $p$'s disk intersects both anchor disks (they're in $\Psi$!) $\underset{\text{intersection cond.}}\Rightarrow \max\{|pa_j|, |pb_j|\} \le r_i + r_j$;
 - $|pq| \le r_i + r_j$ — **exactly** the intersection condition. $\square$
 
 </v-clicks>
@@ -432,6 +448,7 @@ side" (false in general; see Q&A notes). -->
 
 - **Output of the iteration:** $\Psi \;\cup\; \big(\text{max clique found in } X \cup Y\big)$ — a genuine clique: every survivor intersects all of $\Psi$ by the filter, and $\Psi$ itself was validated pairwise-intersecting.
 - Final answer: the **max over all $O(n^{2k})$ guesses**.
+- Completness: The max is also exactly $\mathcal{C}$ because for the *right* $\Psi$ we have: $\mathcal{C} \subseteq (\Psi \cup X \cup Y)$ - **And we go through all of them!**
 
 <img src="../figs/chapter3/algorithm/assembly.png" class="h-95 mx-auto mt-3" />
 
@@ -505,8 +522,8 @@ epilogue is in the slides. -->
 
 ## 1990: the lens
 
-- Same idea: Guess the optimal partition into two cliques $\rightarrow$ compute max-matching $\rightarrow$ take the max over all guesses
-- Different geometric method: Guess the farthest-apart disks in the (unknown) clique - "traps" the rest of the clique
+- **Same idea**: Guess the optimal partition into two cliques $\rightarrow$ compute max-matching $\rightarrow$ take the max over all guesses
+- **Different geometric method**: Guess the farthest-apart disks in the (unknown) clique - "traps" the rest of the clique
 
 <img src="../figs/chapter4/ccj_lens.png" class="h-85 mx-auto" />
 
@@ -521,6 +538,9 @@ lens split (chapter2 lens_geometry) if asked how the split is proven. -->
 ## 1990: the lens
 
 - Why does it trap? The equilateral triangle that occurs inside the lens...
+- We draw a disk of radius $d= |uv|$ around both $u$ and $v$ and consider the occuring lens
+- Disks in the clique can't be outside the lens ($u,v$ are the farthest pair in it...)
+- The two halves of the lens are cliques (and the rest is the same...) 
 
 <img src="../figs/chapter2/perliminaries/lens_geometry.png" class="h-95 mx-auto" />
 
