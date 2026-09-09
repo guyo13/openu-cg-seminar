@@ -69,12 +69,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "docs/qa-armor-notes.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "qa-armor-notes"
             }
           }
         ],
@@ -156,8 +156,8 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/Notes on the Maximum Clique paper.md",
-                "collapseAll": false,
+                "file": "docs/qa-armor-notes.md",
+                "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
                 "showSearch": false,
@@ -247,6 +247,12 @@
   },
   "active": "9965c20fb1103dce",
   "lastOpenFiles": [
+    "slides/lu27549903rpuhe.tmp",
+    "slides/lu27549903rpuhc.tmp",
+    "slides/lu27549903rpuha.tmp",
+    "slides/slides-export.pdf",
+    "slides/slides-export.pptx",
+    "README.md",
     "docs/qa-armor-notes.md",
     "README.md.tmp.269462.99ed381603c4",
     "README.md.tmp.269462.bd933746536f",
@@ -255,10 +261,6 @@
     "slides/dist/_redirects",
     "slides/dist/404.html",
     "slides/dist/assets/slidev/two-cols-D0nqCYYi.js",
-    "slides/dist/assets/slidev/shortcuts-CWdgl9D0.js",
-    "slides/dist/assets/slidev/presenter-DGbTODic.js",
-    "slides/dist/assets/slidev/play-B_42C_00.js",
-    "slides/dist/assets/slidev/overview-BofTNeP2.js",
     "slides/dist/assets/x_clique-TEcCmPpJ.png",
     "slides/dist/assets/type_classes_fig-sOZpRt6y.png",
     "slides/dist/assets/sort_trap-Cc7xD97b.png",
@@ -290,7 +292,6 @@
     "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/running-code.md",
     "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/request-mocking.md",
     "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/playwright-tests.md",
-    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/element-attributes.md",
-    "slides/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/SKILL.md"
+    "slides/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/element-attributes.md"
   ]
 }

@@ -18,5 +18,4 @@ docs/chat-exports/
 slides/node_modules/
 slides/dist/
 slides/.slidev/
-slides/*.pptx
 slides/*.pdf
