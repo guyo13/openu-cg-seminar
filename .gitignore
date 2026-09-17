@@ -19,3 +19,5 @@ slides/node_modules/
 slides/dist/
 slides/.slidev/
 slides/*.pdf
+
+.DS_Store
