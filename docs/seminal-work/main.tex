@@ -1,0 +1,151 @@
+% Seminar summary — skeleton ONLY: structure, environments, figure wiring,
+% and per-section prompts pointing at YOUR OWN existing text.
+% Port the body into the professor's Overleaf template
+% (https://www.overleaf.com/read/yrkcfvnvvxzd#3508dd) — if its preamble
+% differs, keep HER preamble and paste the \section skeleton + figures.
+% Guidelines mapped: Part 1 = Sec 1; Part 2 = Secs 2-4; Part 3 = Sec 5;
+% Part 4 = references. Font 12pt, margins <= 2.5cm (set below in case the
+% template doesn't).
+
+\documentclass[12pt]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\graphicspath{{figs/}}  % adjust to where you place the repo's figs/ tree
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\Dk}{\mathcal{D}_k}
+
+\title{The Maximum Clique Problem in a Disk Graph Made Easy\\
+\large A seminar summary of Keil and Mondal, SoCG 2025}
+\author{Guy Or \\ The Open University of Israel}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% =====================================================================
+\section{Introduction}\label{sec:intro}
+% [Part 1 of the guidelines: problem, motivation, prior state, trivial
+%  approach and why it fails.]
+% YOUR SOURCES: your "why was it famous" answer (as corrected: complexity
+% limbo first, applications one sentence); the stakes slide; qa-armor S3
+% for what NOT to claim. Cover: disk graphs defined informally; CCJ 1990;
+% 35 years + the "notorious" quotes (cite where quoted from); NP-hard
+% neighbors vs polynomial neighbors; Cabello's k=2 question; the 2-approx
+% via 4-point stabbing as the best known approximation; the paper's
+% results informally. End: one-paragraph roadmap of THIS document.
+% "Trivial solution and why not good enough": brute force over subsets is
+% exponential; per-type solving fails because maximum cliques mix types
+% (your notation figure argument).
+
+% =====================================================================
+\section{Preliminaries}\label{sec:prelim}
+% [Guidelines: formal definitions MAY be copied from the paper.]
+% Disk graph, D_{a,r}, adjacency <=> |ab| <= r1+r2, D_k, radius types,
+% C_i vs \C_i, slabs (+ your three-half-planes bullet), and the
+% graph-theory toolkit stated for later use: complement, Gallai
+% (alpha = n - tau), Konig (tau = nu, bipartite). State Lemma 2.1 here or
+% at the start of Sec 4 — your call.
+
+% =====================================================================
+\section{The Guessing Framework}\label{sec:guessing}
+% YOUR SOURCES: the sorting-fallacy exchange ("leftmost/rightmost is a
+% sentence from the analysis, not the algorithm"), your corrected Q3
+% answer (soundness/completeness), the witness-size discussion.
+% Structure: define Psi via the anchors of the (unknown) \C_i -> the
+% circularity -> the sorting fallacy with YOUR s5/s4 example (Fig) ->
+% resolution: enumeration, the per-type menu C(n,0)+C(n,1)+C(n,2) ->
+% soundness vs completeness as named properties -> witness size 2k as
+% what makes the price affordable.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=.75\linewidth]{chapter3/algorithm/sort_trap.png}
+  \caption{The sorting fallacy on our running example: the sorted extremes
+  of the type-1 disks ($s_5$, $s_4$) are not in the maximum clique; the
+  true anchors ($s_1$, $s_2$) are defined only by the unknown solution.
+  (Figure rendered by the author's verification notebook; see
+  Appendix~\ref{sec:ai}.)}
+  \label{fig:sorttrap}
+\end{figure}
+
+% =====================================================================
+\section{The Algorithm}\label{sec:algo}
+
+\subsection{The geometric core: Lemma 2.1}
+% State + prove IN YOUR OWN WORDS (you reproved it closed-book; write
+% that proof). Reference your case figures if you include stills:
+% chapter2/lemma21/*.  The "slide away from the closest point" phrasing
+% is yours — use it.
+
+\subsection{The construction}
+% Psi, slabs, filter, X_i/Y_i definitions (your slide bullets), X and Y.
+% Running example walk-through = the guidelines' suggested "algorithm run
+% example": figs guess.png, slabs.png, filter.png.
+
+\subsection{Survivors form two cliques: Lemma 3.1}
+% YOUR "lower point's type supplies slab and anchors" rule + the relay.
+% Figure: chapter3/algorithm/lemma31_relay.png (real numbers!).
+% Remark idea: the proof never uses Psi \subseteq \C — soundness.
+
+\subsection{From two cliques to one matching}
+% The five-hop chain WITH ATTRIBUTIONS (qa-armor S1; Gallai and Konig in
+% the right places; never "larger side"). Figure: complement.png with the
+% 3-1=2 arithmetic. 
+% Remark (your catch): the paper leaves the Psi-union step implicit —
+% Psi-disks are compatible with every candidate, so K is max in X\cup Y
+% iff K\cup\Psi is max overall; also the Psi pairwise-intersection check.
+
+\subsection{Running time}
+% Your ledger: per-type menu -> O(n^{2k}); per guess O(k^2)+O(nk)+O(n^2)
+% +f(n); the Sigma n_i = n accounting. State Theorem 3.2 formally
+% (copyable). One sentence scoping out Sections 4-5 of the paper.
+
+% =====================================================================
+\section{Conclusions and Discussion}\label{sec:conclusions}
+% [Part 3: what did we see, importance, state of the art, improved
+%  since?, open problems, YOUR ideas.]
+% YOUR SOURCES: XP-vs-FPT slide (both syntactic forms), witness-size
+% framing, the unification table (reproduce it — the professor loved it;
+% end the paper on "the framework was right, the split was wrong").
+% "Improved since" facts to process into your own prose (verify quotes
+% against the sources before submitting):
+%  - SWAT 2026 (Gao, Gawrychowski, Giannopoulos, Mulzer, Singh, Staals,
+%    Zehavi): randomized (1-eps)-approx in ~O(n/eps^2) for unit disks; a
+%    parameterized approximation scheme ~O(f(t)(1/eps)^{O(t)} n) for t
+%    radii — improves on n^{2t} by allowing approximation+randomization;
+%    EXACT complexity still open. \cite{gao2026swat}
+%  - The SoCG 2025 proceedings version extends the technique to translates
+%    of k distinct L-visible convex shapes. \cite{keil2025clique}
+%  - Espenant-Keil-Mondal unit-disk paper: journal version in DCG 2026.
+%    \cite{espenant2026dcg}
+% Open problems: general radii (both directions), FPT vs XP gap, faster
+% fixed-k algorithms. Your own idea candidates: you already voiced one in
+% our discussions — e.g., the witness-enumeration barrier framing as the
+% obstacle an FPT algorithm must break.
+
+\bibliographystyle{alpha}
+\bibliography{references}
+
+% =====================================================================
+\section*{Declaration on the Use of AI Tools}\label{sec:ai}
+% MANDATORY per the guidelines. Draft below — REVIEW, adjust to what is
+% true, and keep it in your voice:
+%
+% "In preparing this seminar (talk and summary) I used Anthropic's Claude
+% as follows: (i) exploring SoCG proceedings and selecting the paper;
+% (ii) discussing the paper's proofs and testing my understanding through
+% questions and quizzes; (iii) generating and iterating on the Python/
+% matplotlib code that renders the original figures in this document (the
+% examples and their computed cliques are verified programmatically; code
+% at github.com/guyo13/openu-cg-seminar); (iv) searching for related and
+% subsequent work; (v) improving the English phrasing of text I wrote.
+% All prose in this summary was written by me; AI assistance was not used
+% to generate passages of the text."
+
+\end{document}
