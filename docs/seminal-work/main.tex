@@ -69,14 +69,14 @@ Attempting to generalize the lens-based approach to multiple radii also fails, a
 Keil and Mondal demonstrate this in section 6.1 of their paper by examining several natural lens-based attempts and showing that they fail to yield the two-clique split that the reduction requires.
 
 \paragraph{Results and roadmap.}
-The paper's main result is given in \textbf{Theorem 3.2.}:
-A maximum clique in a disk graph with $k$ radius types and $n$ vertices is computable in $O(n^{2k}(f(n)+n^2))$ time, where $f(n)$ is the max-matching time in a bipartite graph with $n$ vertices.
+The main result of the paper is given in \textbf{Theorem 3.2.}:
+A maximum clique in a disk graph with $k$ radius types and $n$ vertices is computable in $O(n^{2k}(f(n)+n^2))$ time, where $f(n)$ is the maximum matching time in a bipartite graph with $n$ vertices.
 Specifically, for $k=2$ (and any fixed $k$) the runtime is polynomial, settling Cabello's question.
 The remainder of this summary is organized as follows.
-Section~\ref{sec:prelim} [introduces the notation and the graph-theoretic tools used later].
-Section~\ref{sec:guessing} [presents the guessing framework and why the seemingly trivial step of choosing the anchors is in fact the heart of the problem].
-Section~\ref{sec:algo} [describes the algorithm: the geometric lemma, the slab construction, and the reduction to bipartite matching, illustrated on a running example].
-Section~\ref{sec:conclusions} [discusses the result's complexity-theoretic status, subsequent work, and open problems].
+\textbf{Section~\ref{sec:prelim}} introduces the notation and the graph-theoretic tools used later.
+\textbf{Section~\ref{sec:guessing}} presents the guessing framework and why the seemingly trivial step of choosing the anchors is, in fact, the heart of the problem.
+\textbf{Section~\ref{sec:algo}} describes the algorithm: the geometric lemma, the construction of the slab, and the reduction to bipartite matching, illustrated on a running example.
+\textbf{Section~\ref{sec:conclusions}} discusses the complexity-theoretic status of the result, subsequent work, and open problems.
 
 % =====================================================================
 \section{Preliminaries}\label{sec:prelim}
