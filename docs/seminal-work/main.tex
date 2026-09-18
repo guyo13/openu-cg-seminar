@@ -80,6 +80,22 @@ The remainder of this summary is organized as follows.
 
 % =====================================================================
 \section{Preliminaries}\label{sec:prelim}
+\paragraph{Definitions and notation.}
+\begin{itemize}
+    \item A disk graph $G$ is an intersection graph of disks in $\mathbb{R}^2$, where each vertex of $G$ corresponds to a disk and two vertices are adjacent in $G$ if and only if their disks intersect.
+    \item $D_{a,r}$ a disk with a center at point $a$ and radius $r$.
+    \item Given a pair of disks $D_{a,r}$ and $D_{b,r'}$ , their common intersection region is called a ``lens'' and is denoted as $L(D_{a,r}, D_{b,r'})$.
+    \item For a pair of points $a$ and $b$, we denote the line passing through them as $\ell_{ab}$.
+    \item By $ab$ and $|ab|$ we denote the line segment with endpoints $a, b$ and the Euclidean distance between $a$ and $b$, respectively.
+    \item By $\ell^h_p$ and $\ell^v_p$ we denote the horizontal and vertical lines through a point $p$, respectively.
+    \item By an upper slab $U_{ab}$ of $ab$, we denote the region above $ab$, which is bounded by the lines $\ell^v_a$ and $\ell^v_b$ . Similarly, by a lower slab $\overline{U}_{ab}$ we denote the region below $ab$, which is bounded by $\ell^v_a$ and $\ell^v_b$.
+    \item $\mathcal{D}_k$ is a disk graph where the number of different types of radii is at most $k$. A $type\text{-}i\ disk$ is a disk of radius $r_i$.
+    \item Given a disk graph $\mathcal{D}_k$ with radii $r_1<r_2<\cdots<r_k$, $C_i$ is a clique in $\mathcal{D}_k$ that contains only type-$i$ disks, $\mathcal{C}$ is a maximum clique in $\mathcal{D}_k$, and $\mathcal{C}_i$ is a maximal clique in $\mathcal{C}$ where all disks are of type $i$.
+\end{itemize}
+
+\paragraph{Basic facts and graph-theoretic tools.}
+\textbf{Intersection condition for disks.} Any two disks $D_{a,r}$ and $D_{b,r'}$, intersect if and only if the distance between their centers is at most the sum of their radii, formally: $|ab| \leq r + r'$.
+
 % [Guidelines: formal definitions MAY be copied from the paper.]
 % Disk graph, D_{a,r}, adjacency <=> |ab| <= r1+r2, D_k, radius types,
 % C_i vs \C_i, slabs (+ your three-half-planes bullet), and the
@@ -98,15 +114,15 @@ The remainder of this summary is organized as follows.
 % soundness vs completeness as named properties -> witness size 2k as
 % what makes the price affordable.
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=.75\linewidth]{chapter3/algorithm/sort_trap.png}
-  \caption{The sorting fallacy on our running example: the sorted extremes
-  of the type-1 disks ($s_5$, $s_4$) are not in the maximum clique; the
-  true anchors ($s_1$, $s_2$) are defined only by the unknown solution.
-  (Figure by the author; see Appendix~\ref{sec:ai}.)}
-  \label{fig:sorttrap}
-\end{figure}
+% \begin{figure}[t]
+%   \centering
+%   \includegraphics[width=.75\linewidth]{chapter3/algorithm/sort_trap.png}
+%   \caption{The sorting fallacy on our running example: the sorted extremes
+%   of the type-1 disks ($s_5$, $s_4$) are not in the maximum clique; the
+%   true anchors ($s_1$, $s_2$) are defined only by the unknown solution.
+%   (Figure by the author; see Appendix~\ref{sec:ai}.)}
+%   \label{fig:sorttrap}
+% \end{figure}
 
 % =====================================================================
 \section{The Algorithm}\label{sec:algo}
