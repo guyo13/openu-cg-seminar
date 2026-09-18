@@ -35,26 +35,27 @@
 \paragraph{The problem.}
 A Disk Graph is a graph where each vertex corresponds to a disk in the plane, and there is an edge between two vertices if and only if the corresponding disks intersect.
 The Maximum Clique problem in a disk graph asks for the largest subset of vertices such that every pair of vertices in the subset is connected by an edge, meaning that all corresponding disks intersect with each other.
-The central question addressed by Keil and Mondal's paper is whether this Maximum Clique problem can be computed in polynomial time for disk graphs with multiple distinct radii.
-The authors focus on the case of $k$ distinct radii, where $k$ is a fixed constant, and they provide an algorithm that runs in polynomial time for any fixed $k$.
-For the general case of arbitrary radii, the complexity class of the problem remains unknown, and the author's algorithm, whose runtime is $O(n^{2k}poly(n))$ is generally in the class XP.
-The paper's contribution is significant because it settles the complexity for the case of two distinct radii (shown to be open since 2015 by Cabello) and provides an algorithm that can be extended to more radii.
+The central question addressed by Keil and Mondal's paper is whether this maximum clique problem can be computed in polynomial time for disk graphs with multiple distinct radii.
+The authors consider the case of $k$ distinct radii and provide an algorithm, with runtime $O(n^{2k}\,\mathrm{poly}(n))$, that is polynomial for every fixed $k$ --- placing the problem, parameterized by $k$, in the class XP.
+For the general case of arbitrary radii, the complexity of the problem remains unknown.
+The paper's contribution is significant because it settles a question posed by Cabello in 2015: whether the case of two distinct radii is polynomial-time solvable.
 
 
 \paragraph{Motivation and history.}
-In the context of geometric intersection graphs, the Maximum Clique problem has been a long-standing challenge, particularly for disk graphs with varying radii.
-It has been shown that the problem is polynomial for unit disks as well as rectangles and trapezoids,
-yet NP-Hard for other shapes such as rays, ellipses, triangles, strings, and balls.
-In 1990 Clark, Colbourn and Johnson showed that the case of Unit Disk graph (where disks have an equal radius) can be solved in polynomial time,
+In the context of geometric intersection graphs, the maximum clique problem has been a long-standing challenge, particularly for disk graphs with varying radii.
+The problem is known to be polynomial-time solvable for several related classes such as rectangles and trapezoids,
+yet NP-hard for others such as rays, ellipses, triangles, grounded strings, and balls.
+In 1990, Clark, Colbourn and Johnson showed that the case of unit disk graphs (where all disks have an equal radius) can be solved in polynomial time,
 yet the complexity for disks of arbitrary radii has remained unresolved for over three decades.
-In 2015 Cabello showed that even the case of two distinct radii was open.
+In 2015, Cabello explicitly posed even the case of two distinct radii as an open question.
+A factor-2 approximation via stabbing all disks with four points is known, and improving it below 1.99 was open even for two radii.
 Disk Graphs have practical applications in wireless networks, where nodes can be represented as disks with varying transmission ranges, and finding the maximum clique can help optimize network connectivity and resource allocation.
 
 \paragraph{Why the obvious approaches fail.}
-In the general case, finding a Maximum Clique in a graph is NP-Hard, yet the geometric principle used by Clark, Colbourn and Johnson for unit disks - which relies on the concept of "Lenses" -
-allows for a polynomial-time solution, by finding an optimal partitioning of the graph into 2 cliques in which the maximum clique is guaranteed to be contained.
-This maximum clique can then be found by using any known maximum matching algorithm over the complement graph, which itself is polynomial in the size of the graph.
-The naive approach of applying the algorithm for unit disks to each radius type separately and then combining the results fails because the maximum clique can contain disks of different radii, and thus cannot be guaranteed to be contained within any single radius type.
+In the general case, finding a maximum clique in a graph is NP-hard, yet the geometric principle used by Clark, Colbourn and Johnson for unit disks --- which relies on the concept of ``lenses'' ---
+allows for a polynomial-time solution: for each guessed farthest pair of disks, the candidate disks split into two cliques that together are guaranteed to contain the maximum clique.
+The maximum clique can then be recovered by running a maximum matching algorithm --- itself polynomial --- on the complement of the candidate graph.
+The naive approach of applying the unit disk algorithm to each radius type separately and then combining the results fails because the maximum clique can contain disks of different radii, and thus is not guaranteed to be contained within any single radius type.
 
 \begin{figure}[H]
   \centering
@@ -64,22 +65,18 @@ The naive approach of applying the algorithm for unit disks to each radius type 
   \label{fig:typeclasses}
 \end{figure}
 
-Attempting to generalize the lens-based approach to multiple radii also fails, as the existence of distinct "clique regions" within the lens is no longer guaranteed.
-Keil and Mondal show an example of this by trying several different lens-based approaches, and demonstrating that they all fail to produce a valid clique. 
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=.5\linewidth]{chapter6/lens_deception.png}
-  \caption{\small Trying to generalize the lens-based approach to multiple radii fails, in this example a lens whose raidus is the sum of the two disks' radii does not guarantee that any 2 disks whose centers are in it, actually intersect, defying the property that the unit disk graph algorithm relies on.
-  (Figure by the author; see Appendix~\ref{sec:ai}.)}
-  \label{fig:typeclasses}
-\end{figure}
+Attempting to generalize the lens-based approach to multiple radii also fails, as the existence of distinct ``clique regions'' within the lens is no longer guaranteed.
+Keil and Mondal demonstrate this in section 6.1 of their paper by examining several natural lens-based attempts and showing that they fail to yield the two-clique split that the reduction requires.
 
 \paragraph{Results and roadmap.}
-% ~1 paragraph. The paper's results informally (k radii in
-% O(n^{2k} poly(n)); settles k=2), then a roadmap of THIS document:
-% Sec 2 preliminaries, Sec 3 the guessing framework, Sec 4 the algorithm,
-% Sec 5 discussion and what came after.
+The paper's main result is given in \textbf{Theorem 3.2.}:
+A maximum clique in a disk graph with $k$ radius types and $n$ vertices is computable in $O(n^{2k}(f(n)+n^2))$ time, where $f(n)$ is the max-matching time in a bipartite graph with $n$ vertices.
+Specifically, for $k=2$ (and any fixed $k$) the runtime is polynomial, settling Cabello's question.
+The remainder of this summary is organized as follows.
+Section~\ref{sec:prelim} [introduces the notation and the graph-theoretic tools used later].
+Section~\ref{sec:guessing} [presents the guessing framework and why the seemingly trivial step of choosing the anchors is in fact the heart of the problem].
+Section~\ref{sec:algo} [describes the algorithm: the geometric lemma, the slab construction, and the reduction to bipartite matching, illustrated on a running example].
+Section~\ref{sec:conclusions} [discusses the result's complexity-theoretic status, subsequent work, and open problems].
 
 % =====================================================================
 \section{Preliminaries}\label{sec:prelim}
@@ -165,6 +162,16 @@ Keil and Mondal show an example of this by trying several different lens-based a
 % fixed-k algorithms. Your own idea candidates: you already voiced one in
 % our discussions — e.g., the witness-enumeration barrier framing as the
 % obstacle an FPT algorithm must break.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.5\linewidth]{chapter6/lens_deception.png}
+  \caption{\small Generalizing the lens-based approach to multiple radii fails: the centers of the big disks are confined to a lens of radius $r_s + r_b$, but two big disks on the \emph{same side} of the line $\ell_{pq}$ may still fail to intersect --- breaking the property that the unit disk algorithm relies on.
+  (Figure by the author; see Appendix~\ref{sec:ai}.)}
+  \label{fig:lensdeception}
+\end{figure}
+
+
 
 \bibliographystyle{alpha}
 \bibliography{references}
