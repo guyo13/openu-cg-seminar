@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
 \usepackage{float}
+\usepackage{subcaption}
 \graphicspath{{figs/}}
 
 \newtheorem{theorem}{Theorem}
@@ -178,12 +179,57 @@ An efficient method for finding $\Psi$ would immediately improve the running tim
 
 % =====================================================================
 \section{The Algorithm}\label{sec:algo}
+The algorithm presented in the paper works as follows:
+\begin{description}
+  \item To find a maximal clique in a disk graph $\mathcal{D}_k$ given the description of the disks:
+  \item [Guess.] For each possible set of disks $\Psi$ do:
+  \item [Validity-check.] If $\Psi$ is not a clique continue to the next guess.
+  \item [Create the Slabs.]Otherwise construct the slabs defined by each pair of same-type disks in $\Psi$.
+  \item [Filter] For each disk type $i$ that is present in $\Psi$:
+  Let $X_i$ be the set of all \textit{type-i} disks in $\mathcal{D}_k \setminus \Psi$ whose centers are in the \textbf{upper} slab defined by the \textit{type-i} anchors in $\Psi$ AND are intersecting all disks in $\Psi$.
+  Let $Y_i$ be the set of all \textit{type-i} disks in $\mathcal{D}_k \setminus \Psi$ whose centers are in the \textbf{lower} slab defined by the \textit{type-i} anchors in $\Psi$ AND are intersecting all disks in $\Psi$.
+  Let $X = X_1 \cup \dots \cup X_k, Y = Y_1 \cup \dots \cup Y_k$.
+  \item [Create the max clique in $X \cup Y$] Let $H$ be the complement graph of $X \cup Y$,
+  compute the max-independent-set in $H$ using a max-matching algorithm (e.g Hopcroft-Karp) and let the result be called $MIS_{X \cup Y}$.
+  \item [Assemble] Let $\hat{\mathcal{C}} = \Psi \cup MIS_{X \cup Y}$ be the candidate solution.
+  \item [Aggregate] Return the maximal-found $\hat{\mathcal{C}}$ by keeping a running maximum over all candidate solutions. 
+\end{description}
+\subsection{The geometric basis: Lemma 2.1}
+\paragraph{Lemma 2.1} Let $ab$ be a line segment and let $U_{ab}$ be the upper slab of $ab$.
+Let $q$ be a point in $U_{ab}$ and let $p$ be a point (not necessarily in $U_{ab}$) with a $y$-coordinate equal to or larger than the $y$-coordinate of $q$.
+Then $|pq| \leq max\{|pa|, |pb|\}$.
 
-\subsection{The geometric core: Lemma 2.1}
-% State + prove IN YOUR OWN WORDS (you reproved it closed-book; write
-% that proof). Reference your case figures if you include stills:
-% chapter2/lemma21/*.  The "slide away from the closest point" phrasing
-% is yours — use it.
+Lemma 2.1 provides the basic geometric principle which allows the authors of the paper to leverage the slabs to construct the clique.
+The proof discusses two basic scenarios with a total of three distinct cases for which the lemma is shown to be true.
+In the first scenario, the $x$ coordinate of $a$ and $b$ is different and therefore the slab is a 2-dimensional area.
+This scenario is further split into two cases - one in which a ray that starts at $p$ and goes through $q$ intersects the slab at the line segment $ab$ in a point denoted $o$.
+In the second case, the same ray intersects the slab at one of its sides.
+In the first case "sliding" the intersection point $o$ away from the point $m$ --- where $pm$ is the line segment perpendicular to $ab$ --- causes $|po|$ to monotonically get longer, up to $max\{|pa|, |pb|\}$ and since $|pq| \leq |po|$ the lemma inequality follows.
+In the second case, $pm$ is the line segment perpendicular to the side of the slab which the ray intersects. In that case, silding $o$ downwards from $m$ has the same monotonic effect and the same bound holds. 
+In the second scenario, the $x$ coordinate of $a$ and $b$ equal and then the slab collapses into a ray, in which the inequality of the lemma follows directly. 
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{chapter2/lemma21/lemma21_case_b.png}
+    \caption{\small $o$ exits through $ab$ and slides away from $m$.}
+    \label{fig:lemma21b}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{chapter2/lemma21/lemma21_case_c.png}
+    \caption{\small $o$ exits through a vertical side and slides down.}
+    \label{fig:lemma21c}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{chapter2/lemma21/lemma21_case_vertical.png}
+    \caption{\small The degenerate case: $a$ and $b$ share an $x$-coordinate.}
+    \label{fig:lemma21v}
+  \end{subfigure}
+  \caption{\small Illustration of Lemma 2.1: in every case the exit point $o$ moves away from the point of the boundary closest to $p$, so $|po|$ grows monotonically until it reaches $a$ or $b$. (Figures by the author; see Appendix~\ref{sec:ai}.)}
+  \label{fig:lemma21}
+\end{figure}
 
 \subsection{The construction}
 % Psi, slabs, filter, X_i/Y_i definitions (your slide bullets), X and Y.
