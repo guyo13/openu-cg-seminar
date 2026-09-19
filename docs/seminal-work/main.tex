@@ -262,10 +262,26 @@ As we will see in Section~\ref{subsec:matching}, the maximum clique found in $X 
   \label{fig:worked}
 \end{figure}
 
-\subsection{$X$ and $Y$ form two cliques: Lemma 3.1}
-% YOUR "lower point's type supplies slab and anchors" rule + the relay.
-% Figure: chapter3/algorithm/lemma31_relay.png (real numbers!).
-% Remark idea: the proof never uses Psi \subseteq \C — soundness.
+
+ 
+\subsection{$X$ and $Y$ form two cliques: Lemma 3.1}\label{subsec:lemma31}
+\paragraph{Lemma 3.1} for every $i, j$, where $1 \leq i, j \leq k$, the disks in $X_i \cup X_j$ are mutually adjacent.
+ 
+What Lemma 3.1 actually states is that both $X$ and $Y$ as defined in the algorithm, are cliques in the disk graph:
+any two disks of $X$ lie in some $X_i$ and $X_j$, so pairwise adjacency for all $i, j$ gives that $X$ is a clique, and $Y$ follows by the mirrored argument on the lower slabs.
+The proof is as follows:
+ 
+Let $i, j$ be indices with $1 \leq i, j \leq k$ and let $D_{p,r_i} \in X_i$ and $D_{q,r_j} \in X_j$ --- we show their centers satisfy $|pq| \leq r_i + r_j$, so they intersect.
+The claim is symmetric in the two disks, so we may name the lower one $q$, i.e. $y(q) \leq y(p)$.
+We consider the slab $U_{a_jb_j}$ constructed from the disk centers $D_{a_j, r_j}, D_{b_j, r_j} \in \Psi$.
+Since $D_{q,r_j} \in X_j$, its center lies in $U_{a_jb_j}$, and since $y(q) \leq y(p)$ it follows from Lemma 2.1 that $|pq| \leq \max\{|pa_j|, |pb_j|\}$.
+Now since $D_{p,r_i}$ intersects both $D_{a_j, r_j}$ and $D_{b_j, r_j}$ (because $p \in X_i$, and every disk that survives the filter intersects every disk of $\Psi$) it follows from the intersection condition that $\max\{|pa_j|, |pb_j|\} \leq r_i + r_j$.
+And so $|pq| \leq r_i + r_j$, therefore from the intersection condition it follows that $D_{p,r_i}$ and $D_{q,r_j}$ intersect. $\blacksquare$
+ 
+It is important to observe that Lemma 3.1 does not assume that $\Psi$ is the correct guess, nor that it is a subset of $\mathcal{C}$ --- only that $p$ and $q$ satisfy the two filter conditions: lying in their own type's slab and intersecting every disk of $\Psi$.
+Therefore it is \textit{sound} --- $X, Y$ are indeed cliques even for a suboptimal (but valid) guess of $\Psi$.
+The validity check on $\Psi$ is needed elsewhere: it is what makes the assembled candidate $\Psi \cup MIS_{X \cup Y}$ a clique.
+ 
 
 \subsection{From two cliques to one matching}\label{subsec:matching}
 % The five-hop chain WITH ATTRIBUTIONS (qa-armor S1; Gallai and Konig in
