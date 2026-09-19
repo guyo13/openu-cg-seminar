@@ -157,14 +157,26 @@ $\Psi$ contains \textbf{at most} $2k$ disks, because there are $k$ types and \te
 Thus, the number of possible \textit{guesses} for $\Psi$ is given by $\bigg[\underbrace{\binom{n}{0}}_{\text{type absent}} + \underbrace{\binom{n}{1}}_{a_i = b_i} + \underbrace{\binom{n}{2}}_{a_i \ne b_i} \bigg]^k = O(n^{2k})$.
 The inner sum counts the number of ways to choose the anchors for a single type: either no disks of that type are present in $\mathcal{C}$, or one disk is present (in which case it is both the leftmost and rightmost), or two disks are present (the leftmost and rightmost).
 This factor is raised to the power of $k$ because the choices for each type are independent of the others.
-% YOUR SOURCES: the sorting-fallacy exchange ("leftmost/rightmost is a
-% sentence from the analysis, not the algorithm"), your corrected Q3
-% answer (soundness/completeness), the witness-size discussion.
-% Structure: define Psi via the anchors of the (unknown) \C_i -> the
-% circularity -> the sorting fallacy with YOUR s5/s4 example (Fig) ->
-% resolution: enumeration, the per-type menu C(n,0)+C(n,1)+C(n,2) ->
-% soundness vs completeness as named properties -> witness size 2k as
-% what makes the price affordable.
+This guessing "loop" is what contributes to the algorithm its dominating component of $O(n^{2k})$.
+Finally, this method represents an \textit{improvement} over a naive exhaustive-search for the clique,
+beause the size of the clique can be $O(n)$ while the size of $\Psi$ is $O(k)$ and it is always the case that $k \leq n$.
+
+
+\paragraph{Soundness and Completeness.}
+The algorithm returns the maximum clique by means of keeping the maximal clique resulting of all the guesses.
+A core question that is worth asking to validate the correctness of this method is whether this combinatorial scan is \textit{sound} --- i.e. does it only consider valid cliques --- and whether it is \textit{complete} --- i.e. is it guaranteed to encounter and consider a maximal clique in the input graph.
+To prove \textit{completeness} it is simple to observe that by the definition of the optimal $\Psi$ it is always the case that there exist a leftmost and a rigtmost disks of any given disk-type that participates in the maximal clique.
+Because the authors allowed for the leftmost and rightmost to be the same disk, it is also true for edge cases where there is only one disk of a certain disk-type in the clique or that all of their centers have the same $x$ coordinate.
+It then follows from the above paragraphs that this $\Psi$ is the certificate of the solution and that the guessing method finds it.
+To prove \textit{soundness} we must be sure that the algorithm must never considers a set of vertices that is not a clique. This is achieved by verfying for each guessed $\Psi$ that it is a clique itself, which costs $O(k^2)$ per-guess.
+The rest of the algorithm --- the ``inner loop'' that constructs the clique from the given guess for $\Psi$ --- is proved to be sound by Lemma 3.1.  
+
+
+\paragraph{The need for search and the core innovation.}
+The core innovation presented by Keil and Mondal in this paper is the definition of $\Psi$ and the sound use of the slabs as a means for constructing the clique.
+The paper did not make a discovery on an efficient way to \textit{find} $\Psi$ and therefore it settless for exhaustively enumerating all options,
+with the resulting time complexity still being a state-of-the-art progress in the problem of max cliques in general disk graphs.
+Had the paper made a discovery in that area as well, it could have had the \textit{potential} to settle the complexity question in the general case, yet this question remains open as of writing.  
 
 % \begin{figure}[t]
 %   \centering
