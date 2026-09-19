@@ -141,15 +141,22 @@ and vertical lines through $p$, respectively.
     polynomial time. We write $f(n)$ for the time to compute a maximum
     matching in an $n$-vertex bipartite graph.
 \end{description}
-% [Guidelines: formal definitions MAY be copied from the paper.]
-% Disk graph, D_{a,r}, adjacency <=> |ab| <= r1+r2, D_k, radius types,
-% C_i vs \C_i, slabs (+ your three-half-planes bullet), and the
-% graph-theory toolkit stated for later use: complement, Gallai
-% (alpha = n - tau), Konig (tau = nu, bipartite). State Lemma 2.1 here or
-% at the start of Sec 4 — your call.
 
 % =====================================================================
 \section{The Guessing Framework}\label{sec:guessing}
+\paragraph{Defining the certificate.}
+The main idea of the algorithm is to guess the ``anchors'' of the maximum clique $\mathcal{C}$, which are the \textit{leftmost} and \textit{rightmost} disks of \textbf{each type} in $\mathcal{C}$.
+This guessed set of disks, denoted by $\Psi$, is the \textit{certificate} of the solution and given $\Psi$ --- and the descriptions of the disks --- the clique can be reconstructed in polynomial time from them.
+The reason that the correct guess for $\Psi$ solves the \textit{hard} part of the problem is as follows ---
+consider a disk $D$ of type $i$ that is in the maximum clique $\mathcal{C}$, but is not an anchor, and let $D_{a_i,r_i}$ and $D_{b_i,r_i}$ be the leftmost and rightmost disks of type $i$ in $\mathcal{C}$, respectively.
+Then $D$ must be positioned \textit{between} $D_{a_i,r_i}$ and $D_{b_i,r_i}$ in the plane, specfically either in the slab $U_{a_i,b_i}$ or in the slab $\overline{U}_{a_i,b_i}$
+and since all disks in $\mathcal{C}$ intersect with each other, $D$ must intersect with both $D_{a_i,r_i}$ and $D_{b_i,r_i}$.
+
+\paragraph{The cost of guessing.}
+$\Psi$ contains \textbf{at most} $2k$ disks, because there are $k$ types and \textbf{each type} contributes at most two anchor disks.
+Thus, the number of possible \textit{guesses} for $\Psi$ is given by $\bigg[\underbrace{\binom{n}{0}}_{\text{type absent}} + \underbrace{\binom{n}{1}}_{a_i = b_i} + \underbrace{\binom{n}{2}}_{a_i \ne b_i} \bigg]^k = O(n^{2k})$.
+The inner sum counts the number of ways to choose the anchors for a single type: either no disks of that type are present in $\mathcal{C}$, or one disk is present (in which case it is both the leftmost and rightmost), or two disks are present (the leftmost and rightmost).
+This factor is raised to the power of $k$ because the choices for each type are independent of the others.
 % YOUR SOURCES: the sorting-fallacy exchange ("leftmost/rightmost is a
 % sentence from the analysis, not the algorithm"), your corrected Q3
 % answer (soundness/completeness), the witness-size discussion.
