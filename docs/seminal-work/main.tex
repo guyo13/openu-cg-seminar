@@ -48,7 +48,7 @@ yet NP-hard for others such as rays, ellipses, triangles, grounded strings, and 
 In 1990, Clark, Colbourn and Johnson showed that the case of unit disk graphs (where all disks have an equal radius) can be solved in polynomial time,
 yet the complexity for disks of arbitrary radii has remained unresolved for over three decades.
 In 2015, Cabello explicitly posed even the case of two distinct radii as an open question.
-A factor-2 approximation via stabbing all disks with four points is known, and improving it below 1.99 was open even for two radii.
+A factor-2 approximation via stabbing all disks with four points is known, and improving it below 1.99 remains open even for two radii.
 Disk Graphs have practical applications in wireless networks, where nodes can be represented as disks with varying transmission ranges, and finding the maximum clique can help optimize network connectivity and resource allocation.
 
 \paragraph{Why the obvious approaches fail.}
@@ -69,7 +69,7 @@ Attempting to generalize the lens-based approach to multiple radii also fails, a
 Keil and Mondal demonstrate this in section 6.1 of their paper by examining several natural lens-based attempts and showing that they fail to yield the two-clique split that the reduction requires.
 
 \paragraph{Results and roadmap.}
-The main result of the paper is given in \textbf{Theorem 3.2.}:
+The main result of the paper is given in \textbf{Theorem 3.2}:
 A maximum clique in a disk graph with $k$ radius types and $n$ vertices is computable in $O(n^{2k}(f(n)+n^2))$ time, where $f(n)$ is the maximum matching time in a bipartite graph with $n$ vertices.
 Specifically, for $k=2$ (and any fixed $k$) the runtime is polynomial, settling Cabello's question.
 The remainder of this summary is organized as follows.
@@ -149,7 +149,7 @@ The main idea of the algorithm is to guess the ``anchors'' of the maximum clique
 This guessed set of disks, denoted by $\Psi$, is the \textit{certificate} of the solution and given $\Psi$ --- and the descriptions of the disks --- the clique can be reconstructed in polynomial time from them.
 The reason that the correct guess for $\Psi$ solves the \textit{hard} part of the problem is as follows ---
 consider a disk $D$ of type $i$ that is in the maximum clique $\mathcal{C}$, but is not an anchor, and let $D_{a_i,r_i}$ and $D_{b_i,r_i}$ be the leftmost and rightmost disks of type $i$ in $\mathcal{C}$, respectively.
-Then $D$ must be positioned \textit{between} $D_{a_i,r_i}$ and $D_{b_i,r_i}$ in the plane, specfically either in the slab $U_{a_i,b_i}$ or in the slab $\overline{U}_{a_i,b_i}$
+Then $D$ must be positioned \textit{between} $D_{a_i,r_i}$ and $D_{b_i,r_i}$ in the plane, specifically either in the slab $U_{a_ib_i}$ or in the slab $\overline{U}_{a_ib_i}$
 and since all disks in $\mathcal{C}$ intersect with each other, $D$ must intersect with both $D_{a_i,r_i}$ and $D_{b_i,r_i}$.
 
 \paragraph{The cost of guessing.}
@@ -158,35 +158,42 @@ Thus, the number of possible \textit{guesses} for $\Psi$ is given by $\bigg[\und
 The inner sum counts the number of ways to choose the anchors for a single type: either no disks of that type are present in $\mathcal{C}$, or one disk is present (in which case it is both the leftmost and rightmost), or two disks are present (the leftmost and rightmost).
 This factor is raised to the power of $k$ because the choices for each type are independent of the others.
 This guessing "loop" is what contributes to the algorithm its dominating component of $O(n^{2k})$.
-Finally, this method represents an \textit{improvement} over a naive exhaustive-search for the clique,
-beause the size of the clique can be $O(n)$ while the size of $\Psi$ is $O(k)$ and it is always the case that $k \leq n$.
+Finally, this method represents an \textit{improvement} over a naive exhaustive search for the clique itself:
+enumerating the \textit{certificate} costs $n^{O(k)}$, whereas enumerating candidate cliques directly is exponential in $n$.
+It is the \textbf{size} of the certificate --- at most $2k$ disks, regardless of how large $\mathcal{C}$ is --- that makes the cost affordable.
 
 
 \paragraph{Soundness and Completeness.}
 The algorithm returns the maximum clique by means of keeping the maximal clique resulting of all the guesses.
 A core question that is worth asking to validate the correctness of this method is whether this combinatorial scan is \textit{sound} --- i.e. does it only consider valid cliques --- and whether it is \textit{complete} --- i.e. is it guaranteed to encounter and consider a maximal clique in the input graph.
-To prove \textit{completeness} it is simple to observe that by the definition of the optimal $\Psi$ it is always the case that there exist a leftmost and a rigtmost disks of any given disk-type that participates in the maximal clique.
-Because the authors allowed for the leftmost and rightmost to be the same disk, it is also true for edge cases where there is only one disk of a certain disk-type in the clique or that all of their centers have the same $x$ coordinate.
-It then follows from the above paragraphs that this $\Psi$ is the certificate of the solution and that the guessing method finds it.
-To prove \textit{soundness} we must be sure that the algorithm must never considers a set of vertices that is not a clique. This is achieved by verfying for each guessed $\Psi$ that it is a clique itself, which costs $O(k^2)$ per-guess.
-The rest of the algorithm --- the ``inner loop'' that constructs the clique from the given guess for $\Psi$ --- is proved to be sound by Lemma 3.1.  
+To prove \textit{completeness} it is simple to observe that by the definition of the optimal $\Psi$ it is always the case that there exist a leftmost and a rightmost disk of any given disk-type that participates in the maximum clique.
+Because the authors allowed for the leftmost and rightmost to be the same disk, it is also true for edge cases where there is only one disk of a certain disk-type in the clique or where all of their centers have the same $x$ coordinate.
+Since the enumeration covers every such choice, some iteration guesses exactly this $\Psi$.
+As shown above, for this guess, every disk of $\mathcal{C}$ is either in $\Psi$ or, is trapped in its type's slab
+and intersects all of $\Psi$, so the construction of Section~\ref{sec:algo} recovers a clique of size $|\mathcal{C}|$.
 
+To prove \textit{soundness} we must be sure that the algorithm never considers a set of vertices that is not a clique. This is achieved by verifying for each guessed $\Psi$ that it is a clique itself, which costs $O(k^2)$ per guess.
+The rest of the algorithm --- the ``inner loop'' that constructs the clique from the given guess for $\Psi$ --- is proved to be sound by Lemma 3.1.
+Lemma 3.1's proof only assumes that a disk lies in its type's slab and intersects every disk of $\Psi$. It never assumes that the guess is correct
+Hence every valid guess yields a genuine clique.
+Incorrect guesses simply produce smaller ones and lose the final maximum.  
 
 \paragraph{The need for search and the core innovation.}
 The core innovation presented by Keil and Mondal in this paper is the definition of $\Psi$ and the sound use of the slabs as a means for constructing the clique.
-The paper did not make a discovery on an efficient way to \textit{find} $\Psi$ and therefore it settless for exhaustively enumerating all options,
-with the resulting time complexity still being a state-of-the-art progress in the problem of max cliques in general disk graphs.
-Had the paper made a discovery in that area as well, it could have had the \textit{potential} to settle the complexity question in the general case, yet this question remains open as of writing.  
+The paper did not discover an efficient way to \textit{find} $\Psi$, and therefore settles for exhaustively enumerating all options,
+with the resulting time complexity nonetheless being the first polynomial-time algorithm for any fixed number of radii.
+An efficient method for finding $\Psi$ would immediately improve the running time, and might bring the general case within reach --- but with an unbounded number of radii the certificate itself may be of size $\Theta(n)$, so this remains open as of writing.  
 
-% \begin{figure}[t]
-%   \centering
-%   \includegraphics[width=.75\linewidth]{chapter3/algorithm/sort_trap.png}
-%   \caption{The sorting fallacy on our running example: the sorted extremes
-%   of the type-1 disks ($s_5$, $s_4$) are not in the maximum clique; the
-%   true anchors ($s_1$, $s_2$) are defined only by the unknown solution.
-%   (Figure by the author; see Appendix~\ref{sec:ai}.)}
-%   \label{fig:sorttrap}
-% \end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.75\linewidth]{chapter3/algorithm/sort_trap.png}
+  \caption{\small The sorting fallacy on our running example: the sorted extremes
+  of the type-1 disks ($s_5$, $s_4$) are not in the maximum clique; the
+  true anchors ($s_1$, $s_2$) are defined only by the unknown solution.
+  (Figure by the author; see Appendix~\ref{sec:ai}.)}
+  \label{fig:sorttrap}
+\end{figure}
 
 % =====================================================================
 \section{The Algorithm}\label{sec:algo}
@@ -202,7 +209,7 @@ Had the paper made a discovery in that area as well, it could have had the \text
 % Running example walk-through = the guidelines' suggested "algorithm run
 % example": figs guess.png, slabs.png, filter.png.
 
-\subsection{Survivors form two cliques: Lemma 3.1}
+\subsection{$X$ and $Y$ form two cliques: Lemma 3.1}
 % YOUR "lower point's type supplies slab and anchors" rule + the relay.
 % Figure: chapter3/algorithm/lemma31_relay.png (real numbers!).
 % Remark idea: the proof never uses Psi \subseteq \C — soundness.
