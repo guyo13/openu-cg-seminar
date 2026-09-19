@@ -1,19 +1,10 @@
-% Seminar summary — skeleton ONLY: structure, environments, figure wiring,
-% and per-section prompts pointing at YOUR OWN existing text.
-% Port the body into the professor's Overleaf template
-% (https://www.overleaf.com/read/yrkcfvnvvxzd#3508dd) — if its preamble
-% differs, keep HER preamble and paste the \section skeleton + figures.
-% Guidelines mapped: Part 1 = Sec 1; Part 2 = Secs 2-4; Part 3 = Sec 5;
-% Part 4 = references. Font 12pt, margins <= 2.5cm (set below in case the
-% template doesn't).
-
 \documentclass[12pt]{article}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
 \usepackage{float}
-\graphicspath{{figs/}}  % adjust to where you place the repo's figs/ tree
+\graphicspath{{figs/}}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
@@ -188,7 +179,7 @@ An efficient method for finding $\Psi$ would immediately improve the running tim
 \begin{figure}[H]
   \centering
   \includegraphics[width=.75\linewidth]{chapter3/algorithm/sort_trap.png}
-  \caption{\small The sorting fallacy on our running example: the sorted extremes
+  \caption{\small The sorting fallacy on an example: the sorted extremes
   of the type-1 disks ($s_5$, $s_4$) are not in the maximum clique; the
   true anchors ($s_1$, $s_2$) are defined only by the unknown solution.
   (Figure by the author; see Appendix~\ref{sec:ai}.)}
